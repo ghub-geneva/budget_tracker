@@ -589,6 +589,14 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .tx-particular { font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tx-amount { font-weight: 700; text-align: right; color: var(--text); }
 
+/* ── Annual Summary Charts ── */
+.summary-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
 /* ── Annual Summary ── */
 .table-wrap {
   overflow-x: auto;

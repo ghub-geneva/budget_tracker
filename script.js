@@ -24,6 +24,8 @@ let activeExpenseCategory = 'bills';
 let txCategory            = null;
 let donutChart            = null;
 let trendChart            = null;
+let annualOverviewChart   = null;
+let annualStackedChart    = null;
 
 // ── Storage ──────────────────────────────────────────────────
 function loadData() {
@@ -281,11 +283,80 @@ function renderExpenses(md) {
 
 // ── Annual Summary ────────────────────────────────────────────
 function renderSummary(data) {
-  const tbody = document.getElementById('annualTableBody');
+  const incomeVals = MONTHS.map(m => totalIncome(getMonthData(data, m)));
+  const expVals    = MONTHS.map(m => totalExpenses(getMonthData(data, m)));
+  const netVals    = MONTHS.map((_, i) => incomeVals[i] - expVals[i]);
+
+  // Chart 1: Grouped bar (income vs expenses) + net line
+  if (annualOverviewChart) { annualOverviewChart.destroy(); annualOverviewChart = null; }
+  annualOverviewChart = new Chart(
+    document.getElementById('annualOverviewChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: SHORT_LABELS,
+      datasets: [
+        { label: 'Income',   data: incomeVals, backgroundColor: 'rgba(52,211,153,0.75)', borderRadius: 5, borderSkipped: false, order: 2 },
+        { label: 'Expenses', data: expVals,    backgroundColor: 'rgba(248,113,113,0.75)', borderRadius: 5, borderSkipped: false, order: 2 },
+        {
+          label: 'Net Balance', data: netVals, type: 'line', order: 1,
+          borderColor: '#a5b4fc', backgroundColor: 'rgba(165,180,252,0.1)',
+          borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#a5b4fc',
+          pointHoverRadius: 6, tension: 0.35, fill: true, yAxisID: 'y'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } },
+        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+      }
+    }
+  });
+
+  // Chart 2: Stacked bar — expense categories per month
+  if (annualStackedChart) { annualStackedChart.destroy(); annualStackedChart = null; }
+  annualStackedChart = new Chart(
+    document.getElementById('annualStackedChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: SHORT_LABELS,
+      datasets: CATEGORIES.map(c => ({
+        label: c.label,
+        data: MONTHS.map(m => categoryTotal(getMonthData(data, m), c.key)),
+        backgroundColor: c.color + 'cc',
+        borderColor: c.color,
+        borderWidth: 0,
+        borderRadius: 3,
+        borderSkipped: false
+      }))
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#64748b' } },
+        y: { stacked: true, beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
+      }
+    }
+  });
+
+  // Table
+  const tbody   = document.getElementById('annualTableBody');
+  const incomeSum = incomeVals.reduce((s, v) => s + v, 0);
+  const expSum    = expVals.reduce((s, v) => s + v, 0);
+  const netSum    = netVals.reduce((s, v) => s + v, 0);
   tbody.innerHTML = '';
 
-  const incomeVals = MONTHS.map(m => totalIncome(getMonthData(data, m)));
-  const incomeSum  = incomeVals.reduce((s, v) => s + v, 0);
   tbody.innerHTML += `<tr class="row-income"><td>Income</td>${incomeVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(incomeSum)}</td></tr>`;
 
   CATEGORIES.forEach(c => {
@@ -293,17 +364,12 @@ function renderSummary(data) {
     const sum  = vals.reduce((s, v) => s + v, 0);
     tbody.innerHTML += `<tr>
       <td><span class="dot" style="background:${c.color};margin-right:6px"></span>${c.label}</td>
-      ${vals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#cbd5e1">—</span>'}</td>`).join('')}
-      <td>${sum > 0 ? fmt(sum) : '<span style="color:#cbd5e1">—</span>'}</td>
+      ${vals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#334155">—</span>'}</td>`).join('')}
+      <td>${sum > 0 ? fmt(sum) : '<span style="color:#334155">—</span>'}</td>
     </tr>`;
   });
 
-  const expVals = MONTHS.map(m => totalExpenses(getMonthData(data, m)));
-  const expSum  = expVals.reduce((s, v) => s + v, 0);
   tbody.innerHTML += `<tr class="row-total"><td>Total Expenses</td>${expVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(expSum)}</td></tr>`;
-
-  const netVals = MONTHS.map((_, i) => incomeVals[i] - expVals[i]);
-  const netSum  = netVals.reduce((s, v) => s + v, 0);
   tbody.innerHTML += `<tr class="row-net"><td>Net Balance</td>${netVals.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${fmt(v)}</td>`).join('')}<td class="${netSum >= 0 ? 'positive' : 'negative'}">${fmt(netSum)}</td></tr>`;
 }
 
