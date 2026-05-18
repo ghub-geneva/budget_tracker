@@ -27,6 +27,7 @@ let donutChart            = null;
 let trendChart            = null;
 let annualOverviewChart   = null;
 let annualStackedChart    = null;
+let dailyExpenseChart     = null;
 
 // ── Storage ──────────────────────────────────────────────────
 function loadData() {
@@ -198,6 +199,55 @@ function renderTrend(data) {
       scales: {
         y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString('en-PH'), color: '#64748b' }, grid: { color: '#1e293b' } },
         x: { grid: { display: false }, ticks: { color: '#64748b' } }
+      }
+    }
+  });
+
+  renderDailyChart(md);
+}
+
+function renderDailyChart(md) {
+  const [year, month] = activeMonth.split('-').map(Number);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  // Sum all expense transactions per day
+  const dailyTotals = new Array(daysInMonth).fill(0);
+  CATEGORIES.forEach(c => {
+    (md.expenses[c.key] || []).forEach(tx => {
+      if (!tx.date) return;
+      const d = new Date(tx.date).getDate();
+      if (d >= 1 && d <= daysInMonth) dailyTotals[d - 1] += (+tx.amount || 0);
+    });
+  });
+
+  const titleEl = document.getElementById('dailyChartTitle');
+  if (titleEl) titleEl.textContent = `Daily Expense Comparison — ${MONTH_LABELS[activeMonth]}`;
+
+  if (dailyExpenseChart) { dailyExpenseChart.destroy(); dailyExpenseChart = null; }
+  dailyExpenseChart = new Chart(document.getElementById('dailyExpenseChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Daily Expenses',
+        data: dailyTotals,
+        backgroundColor: dailyTotals.map(v => v > 0 ? 'rgba(248,113,113,0.75)' : 'rgba(248,113,113,0.15)'),
+        borderColor: dailyTotals.map(v => v > 0 ? '#f87171' : 'transparent'),
+        borderWidth: 1,
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y > 0 ? ` ${fmt(ctx.parsed.y)}` : ' No expenses' } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11 } }, title: { display: true, text: 'Day of Month', color: '#64748b' } },
+        y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
       }
     }
   });
