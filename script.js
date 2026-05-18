@@ -18,11 +18,12 @@ const CATEGORIES = [
   { key: 'unexpected',    label: 'Unexpected Expenses',color: '#ef4444' }
 ];
 
-let activeMonth = '2026-01';
-let activeTab   = 'dashboard';
-let txCategory  = null;
-let donutChart  = null;
-let trendChart  = null;
+let activeMonth           = '2026-01';
+let activeTab             = 'dashboard';
+let activeExpenseCategory = 'bills';
+let txCategory            = null;
+let donutChart            = null;
+let trendChart            = null;
 
 // ── Storage ──────────────────────────────────────────────────
 function loadData() {
@@ -237,23 +238,36 @@ function updateIncomeFooter(md) {
 // ── Expenses ──────────────────────────────────────────────────
 function renderExpenses(md) {
   const container = document.getElementById('expenseCategories');
-  container.innerHTML = '';
-  CATEGORIES.forEach(c => {
+
+  // Build tab bar + single category panel
+  const tabsHtml = CATEGORIES.map(c => {
     const txs   = md.expenses[c.key] || [];
     const total = txs.reduce((s, tx) => s + (+tx.amount || 0), 0);
-    const txHtml = txs.length === 0
-      ? '<p class="empty-msg">No transactions yet.</p>'
-      : txs.map((tx, i) => `
-          <div class="tx-item">
-            <span class="tx-date">${fmtDate(tx.date)}</span>
-            <span class="tx-particular">${escHtml(tx.particular)}</span>
-            <span class="tx-amount">${fmt(tx.amount)}</span>
-            <button class="btn-icon remove-tx" data-cat="${c.key}" data-idx="${i}" title="Remove">&#x2715;</button>
-          </div>`).join('');
+    const isActive = c.key === activeExpenseCategory;
+    return `
+      <button class="cat-tab${isActive ? ' active' : ''}" data-cat="${c.key}" style="--cat-color:${c.color}">
+        <span class="cat-tab-dot" style="background:${c.color}"></span>
+        <span class="cat-tab-label">${c.label}</span>
+        <span class="cat-tab-total">${fmt(total)}</span>
+      </button>`;
+  }).join('');
 
-    const section = document.createElement('div');
-    section.className = 'category-section';
-    section.innerHTML = `
+  const c    = CATEGORIES.find(c => c.key === activeExpenseCategory);
+  const txs  = md.expenses[c.key] || [];
+  const total = txs.reduce((s, tx) => s + (+tx.amount || 0), 0);
+  const txHtml = txs.length === 0
+    ? '<p class="empty-msg">No transactions yet.</p>'
+    : txs.map((tx, i) => `
+        <div class="tx-item">
+          <span class="tx-date">${fmtDate(tx.date)}</span>
+          <span class="tx-particular">${escHtml(tx.particular)}</span>
+          <span class="tx-amount">${fmt(tx.amount)}</span>
+          <button class="btn-icon remove-tx" data-cat="${c.key}" data-idx="${i}" title="Remove">&#x2715;</button>
+        </div>`).join('');
+
+  container.innerHTML = `
+    <div class="cat-tabs">${tabsHtml}</div>
+    <div class="category-section">
       <div class="category-header" style="border-left:4px solid ${c.color}">
         <div class="category-header-left">
           <span class="category-title">${c.label}</span>
@@ -261,9 +275,8 @@ function renderExpenses(md) {
         </div>
         <button class="btn-add-tx" data-cat="${c.key}">+ Add</button>
       </div>
-      <div class="tx-list">${txHtml}</div>`;
-    container.appendChild(section);
-  });
+      <div class="tx-list">${txHtml}</div>
+    </div>`;
 }
 
 // ── Annual Summary ────────────────────────────────────────────
@@ -435,6 +448,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Expense actions (delegation)
   document.getElementById('expenseCategories').addEventListener('click', e => {
+    const tab = e.target.closest('.cat-tab');
+    if (tab) { activeExpenseCategory = tab.dataset.cat; render(); return; }
+
     const addBtn = e.target.closest('.btn-add-tx');
     if (addBtn) { openTxModal(addBtn.dataset.cat); return; }
 
