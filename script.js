@@ -13,6 +13,7 @@ const CATEGORIES = [
   { key: 'bills',         label: 'Bills',              color: '#6366f1' },
   { key: 'debts',         label: 'Debts',              color: '#f59e0b' },
   { key: 'needs',         label: 'Needs',              color: '#10b981' },
+  { key: 'food',          label: 'Food',               color: '#fb923c' },
   { key: 'wants',         label: 'Wants',              color: '#3b82f6' },
   { key: 'miscellaneous', label: 'Miscellaneous',      color: '#8b5cf6' },
   { key: 'unexpected',    label: 'Unexpected Expenses',color: '#ef4444' }
@@ -41,7 +42,7 @@ function getMonthData(data, month) {
   if (!data[month]) {
     data[month] = {
       income: { main15: 0, main30: 0, graphics15: 0, graphics30: 0, municipal15: 0, municipal30: 0, additional: [] },
-      expenses: { bills: [], debts: [], needs: [], wants: [], miscellaneous: [], unexpected: [] }
+      expenses: { bills: [], debts: [], needs: [], food: [], wants: [], miscellaneous: [], unexpected: [] }
     };
   }
   return data[month];
@@ -449,6 +450,31 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Migration: add Food category ─────────────────────────────
+function migrateAddFood() {
+  const raw = localStorage.getItem('budgetTracker2026');
+  if (!raw) return;
+  const data = JSON.parse(raw);
+  const isFoodItem = p => /breakfast|lunch|dinner|bread|snacks|7\/11/i.test(p);
+  let changed = false;
+  Object.keys(data).forEach(month => {
+    const exp = data[month].expenses;
+    if (!exp) return;
+    if (!exp.food) { exp.food = []; }
+    ['needs', 'wants'].forEach(src => {
+      if (!exp[src]) return;
+      const keep = [], move = [];
+      exp[src].forEach(tx => (isFoodItem(tx.particular) ? move : keep).push(tx));
+      if (move.length) {
+        exp.food.push(...move);
+        exp[src] = keep;
+        changed = true;
+      }
+    });
+  });
+  if (changed) localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+}
+
 // ── Seed Data ─────────────────────────────────────────────────
 function seedData() {
   const existing = localStorage.getItem('budgetTracker2026');
@@ -474,40 +500,42 @@ function seedData() {
         needs: [
           { date: '2026-05-04', particular: 'Sack of Rice', amount: 2700 },
           { date: '2026-05-04', particular: 'Laundry', amount: 750 },
-          { date: '2026-05-04', particular: 'Bread', amount: 30 },
-          { date: '2026-05-06', particular: 'Breakfast', amount: 500 },
           { date: '2026-05-06', particular: 'Buttaine', amount: 400 },
           { date: '2026-05-06', particular: 'Zonrox/Downy', amount: 600 },
-          { date: '2026-05-07', particular: 'Lunch', amount: 500 },
-          { date: '2026-05-08', particular: 'Dinner', amount: 803 },
-          { date: '2026-05-09', particular: 'Breakfast', amount: 253 },
           { date: '2026-05-09', particular: 'Water Bottle', amount: 220 },
-          { date: '2026-05-09', particular: 'Dinner', amount: 500 },
           { date: '2026-05-10', particular: "Food (Mother's Day)", amount: 1525 },
-          { date: '2026-05-11', particular: 'Lunch', amount: 60 },
           { date: '2026-05-11', particular: 'Fare', amount: 100 },
-          { date: '2026-05-11', particular: 'Dinner', amount: 272 },
-          { date: '2026-05-12', particular: 'Lunch', amount: 223 },
           { date: '2026-05-12', particular: 'Others', amount: 141 },
+          { date: '2026-05-14', particular: 'Laundry', amount: 750 },
+          { date: '2026-05-14', particular: 'Groceries', amount: 436.50 }
+        ],
+        food: [
+          { date: '2026-05-04', particular: 'Bread', amount: 30 },
+          { date: '2026-05-04', particular: 'Midnight Snacks', amount: 130 },
+          { date: '2026-05-05', particular: '7/11', amount: 618 },
+          { date: '2026-05-06', particular: 'Breakfast', amount: 500 },
+          { date: '2026-05-07', particular: 'Lunch', amount: 500 },
+          { date: '2026-05-07', particular: 'Snacks', amount: 300 },
+          { date: '2026-05-07', particular: '7/11 Store', amount: 538 },
+          { date: '2026-05-08', particular: 'Dinner', amount: 803 },
+          { date: '2026-05-08', particular: 'Snacks', amount: 300 },
+          { date: '2026-05-09', particular: 'Breakfast', amount: 253 },
+          { date: '2026-05-09', particular: 'Dinner', amount: 500 },
+          { date: '2026-05-10', particular: '7/11 (Ice Cream)', amount: 468 },
+          { date: '2026-05-11', particular: 'Lunch', amount: 60 },
+          { date: '2026-05-11', particular: 'Dinner', amount: 272 },
+          { date: '2026-05-11', particular: 'Snacks', amount: 30 },
+          { date: '2026-05-12', particular: 'Lunch', amount: 223 },
           { date: '2026-05-12', particular: 'Dinner', amount: 172 },
           { date: '2026-05-13', particular: 'Breakfast', amount: 70 },
+          { date: '2026-05-13', particular: 'Snacks', amount: 250 },
           { date: '2026-05-14', particular: 'Food', amount: 444 },
-          { date: '2026-05-14', particular: 'Laundry', amount: 750 },
-          { date: '2026-05-14', particular: 'Groceries', amount: 436.50 },
-          { date: '2026-05-15', particular: 'Food', amount: 191 }
+          { date: '2026-05-15', particular: 'Food', amount: 191 },
+          { date: '2026-05-15', particular: 'Snacks', amount: 110 }
         ],
         wants: [
           { date: '2026-05-04', particular: 'Mixed Nuts', amount: 200 },
-          { date: '2026-05-04', particular: 'Midnight Snacks', amount: 130 },
-          { date: '2026-05-05', particular: '7/11', amount: 618 },
-          { date: '2026-05-06', particular: 'Milktea', amount: 328 },
-          { date: '2026-05-07', particular: 'Snacks', amount: 300 },
-          { date: '2026-05-07', particular: '7/11 Store', amount: 538 },
-          { date: '2026-05-08', particular: 'Snacks', amount: 300 },
-          { date: '2026-05-10', particular: '7/11 (Ice Cream)', amount: 468 },
-          { date: '2026-05-11', particular: 'Snacks', amount: 30 },
-          { date: '2026-05-13', particular: 'Snacks', amount: 250 },
-          { date: '2026-05-15', particular: 'Snacks', amount: 110 }
+          { date: '2026-05-06', particular: 'Milktea', amount: 328 }
         ],
         miscellaneous: [
           { date: '2026-05-04', particular: 'Load (Sis)', amount: 53 },
@@ -542,6 +570,7 @@ function seedData() {
 
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  migrateAddFood();
   seedData();
 
   const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary', admin: 'Admin' };
