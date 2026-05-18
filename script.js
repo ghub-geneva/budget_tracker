@@ -1,12 +1,13 @@
 'use strict';
 
-const MONTHS = ['2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
+const MONTHS = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
 const MONTH_LABELS = {
-  '2026-05': 'May 2026', '2026-06': 'June 2026', '2026-07': 'July 2026',
-  '2026-08': 'August 2026', '2026-09': 'September 2026', '2026-10': 'October 2026',
-  '2026-11': 'November 2026', '2026-12': 'December 2026'
+  '2026-01': 'January 2026', '2026-02': 'February 2026', '2026-03': 'March 2026',
+  '2026-04': 'April 2026',   '2026-05': 'May 2026',      '2026-06': 'June 2026',
+  '2026-07': 'July 2026',    '2026-08': 'August 2026',   '2026-09': 'September 2026',
+  '2026-10': 'October 2026', '2026-11': 'November 2026', '2026-12': 'December 2026'
 };
-const SHORT_LABELS = ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SHORT_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 const CATEGORIES = [
   { key: 'bills',         label: 'Bills',              color: '#6366f1' },
@@ -17,7 +18,7 @@ const CATEGORIES = [
   { key: 'unexpected',    label: 'Unexpected Expenses',color: '#ef4444' }
 ];
 
-let activeMonth = '2026-05';
+let activeMonth = '2026-01';
 let activeTab   = 'dashboard';
 let txCategory  = null;
 let donutChart  = null;
