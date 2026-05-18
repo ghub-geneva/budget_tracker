@@ -254,6 +254,10 @@ function renderExpenses(md) {
       </button>`;
   }).join('');
 
+  const grandTotal = CATEGORIES.reduce((s, cat) => {
+    return s + (md.expenses[cat.key] || []).reduce((ss, tx) => ss + (+tx.amount || 0), 0);
+  }, 0);
+
   const c    = CATEGORIES.find(c => c.key === activeExpenseCategory);
   const txs  = (md.expenses[c.key] || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   const total = txs.reduce((s, tx) => s + (+tx.amount || 0), 0);
@@ -268,7 +272,13 @@ function renderExpenses(md) {
         </div>`).join('');
 
   container.innerHTML = `
-    <div class="cat-tabs">${tabsHtml}</div>
+    <div class="expenses-topbar">
+      <div class="cat-tabs">${tabsHtml}</div>
+      <div class="expenses-grand-total">
+        <span class="expenses-grand-label">Total Expenses</span>
+        <span class="expenses-grand-amount">${fmt(grandTotal)}</span>
+      </div>
+    </div>
     <div class="category-section">
       <div class="category-header" style="border-left:4px solid ${c.color}">
         <div class="category-header-left">
