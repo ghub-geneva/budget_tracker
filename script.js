@@ -18,7 +18,7 @@ const CATEGORIES = [
   { key: 'unexpected',    label: 'Unexpected Expenses',color: '#ef4444' }
 ];
 
-let activeMonth           = '2026-01';
+let activeMonth           = '2026-05';
 let activeTab             = 'dashboard';
 let activeExpenseCategory = 'bills';
 let txCategory            = null;
