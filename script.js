@@ -455,7 +455,7 @@ function migrateAddFood() {
   const raw = localStorage.getItem('budgetTracker2026');
   if (!raw) return;
   const data = JSON.parse(raw);
-  const isFoodItem = p => /breakfast|lunch|dinner|bread|snacks|7\/11/i.test(p);
+  const isFoodItem = p => /breakfast|lunch|dinner|bread|snacks|7\/11|food/i.test(p);
   let changed = false;
   Object.keys(data).forEach(month => {
     const exp = data[month].expenses;
@@ -503,7 +503,6 @@ function seedData() {
           { date: '2026-05-06', particular: 'Buttaine', amount: 400 },
           { date: '2026-05-06', particular: 'Zonrox/Downy', amount: 600 },
           { date: '2026-05-09', particular: 'Water Bottle', amount: 220 },
-          { date: '2026-05-10', particular: "Food (Mother's Day)", amount: 1525 },
           { date: '2026-05-11', particular: 'Fare', amount: 100 },
           { date: '2026-05-12', particular: 'Others', amount: 141 },
           { date: '2026-05-14', particular: 'Laundry', amount: 750 },
@@ -521,6 +520,7 @@ function seedData() {
           { date: '2026-05-08', particular: 'Snacks', amount: 300 },
           { date: '2026-05-09', particular: 'Breakfast', amount: 253 },
           { date: '2026-05-09', particular: 'Dinner', amount: 500 },
+          { date: '2026-05-10', particular: "Food (Mother's Day)", amount: 1525 },
           { date: '2026-05-10', particular: '7/11 (Ice Cream)', amount: 468 },
           { date: '2026-05-11', particular: 'Lunch', amount: 60 },
           { date: '2026-05-11', particular: 'Dinner', amount: 272 },
