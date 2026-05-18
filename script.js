@@ -476,6 +476,38 @@ function migrateAddFood() {
   if (changed) localStorage.setItem('budgetTracker2026', JSON.stringify(data));
 }
 
+// ── Migration: restore miscellaneous May data ─────────────────
+function migrateRestoreMisc() {
+  if (localStorage.getItem('_miscRestored')) return;
+  const raw = localStorage.getItem('budgetTracker2026');
+  if (!raw) return;
+  const data = JSON.parse(raw);
+  if (!data['2026-05']) return;
+  data['2026-05'].expenses.miscellaneous = [
+    { date: '2026-05-04', particular: 'Load (Sis)', amount: 53 },
+    { date: '2026-05-05', particular: 'Papa Odet Allowance', amount: 1000 },
+    { date: '2026-05-06', particular: 'John Allowance', amount: 800 },
+    { date: '2026-05-07', particular: 'Massage', amount: 860 },
+    { date: '2026-05-08', particular: 'John (VB)', amount: 1000 },
+    { date: '2026-05-08', particular: 'Trapo', amount: 500 },
+    { date: '2026-05-09', particular: "Mother's Day Gift", amount: 5000 },
+    { date: '2026-05-09', particular: 'Load (Sis)', amount: 89 },
+    { date: '2026-05-09', particular: 'John (Borrow)', amount: 1500 },
+    { date: '2026-05-10', particular: 'Ninang Gift for Harold (Ebeb)', amount: 1500 },
+    { date: '2026-05-10', particular: 'Church Offering', amount: 200 },
+    { date: '2026-05-11', particular: 'John Allowance', amount: 500 },
+    { date: '2026-05-12', particular: 'Kirsty Allowance', amount: 1500 },
+    { date: '2026-05-13', particular: 'John (Allowance)', amount: 200 },
+    { date: '2026-05-13', particular: 'John (Borrow)', amount: 1000 },
+    { date: '2026-05-14', particular: 'Massage', amount: 860 },
+    { date: '2026-05-15', particular: 'Misc/7-11', amount: 400 },
+    { date: '2026-05-16', particular: 'Personal Care (Nails)', amount: 700 },
+    { date: '2026-05-16', particular: 'John (Load)', amount: 89 }
+  ];
+  localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+  localStorage.setItem('_miscRestored', '1');
+}
+
 // ── Seed Data ─────────────────────────────────────────────────
 function seedData() {
   const existing = localStorage.getItem('budgetTracker2026');
@@ -555,7 +587,9 @@ function seedData() {
           { date: '2026-05-13', particular: 'John (Allowance)', amount: 200 },
           { date: '2026-05-13', particular: 'John (Borrow)', amount: 1000 },
           { date: '2026-05-14', particular: 'Massage', amount: 860 },
-          { date: '2026-05-15', particular: 'Misc/7-11', amount: 400 }
+          { date: '2026-05-15', particular: 'Misc/7-11', amount: 400 },
+          { date: '2026-05-16', particular: 'Personal Care (Nails)', amount: 700 },
+          { date: '2026-05-16', particular: 'John (Load)', amount: 89 }
         ],
         unexpected: [
           { date: '2026-05-07', particular: 'Volleyball', amount: 400 },
@@ -572,6 +606,7 @@ function seedData() {
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   migrateAddFood();
+  migrateRestoreMisc();
   seedData();
 
   const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary', admin: 'Admin' };
