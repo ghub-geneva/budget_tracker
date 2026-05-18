@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 Budget Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="rgba(255,255,255,0.2)"/>
+          <path d="M8 14h4v6H8v-6zm4-4h4v10h-4V10zm4-4h4v14h-4V6z" fill="white"/>
+        </svg>
+        <div>
+          <h1>Budget Tracker</h1>
+          <span class="year">2026</span>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="dashboard">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h6v6H1V1zm0 8h6v6H1V9zm8-8h6v6H9V1zm0 8h6v6H9V9z"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-tab="income">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-1.5h1.5v1.5zm0-3h-1.5V4.5h1.5V8.5z"/></svg>
+        Income
+      </button>
+      <button class="nav-item" data-tab="expenses">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v2H2V2zm0 3h12v9H2V5zm3 2v5h1V7H5zm3 0v5h1V7H8zm3 0v5h1V7h-1z"/></svg>
+        Expenses
+      </button>
+      <button class="nav-item" data-tab="summary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v1H1V3zm0 3h14v1H1V6zm0 3h14v1H1V9zm0 3h9v1H1v-1z"/></svg>
+        Annual Summary
+      </button>
+    </nav>
+    <div class="sidebar-month">
+      <label>Active Month</label>
+      <select id="monthSelect">
+        <option value="2026-05">May 2026</option>
+        <option value="2026-06">June 2026</option>
+        <option value="2026-07">July 2026</option>
+        <option value="2026-08">August 2026</option>
+        <option value="2026-09">September 2026</option>
+        <option value="2026-10">October 2026</option>
+        <option value="2026-11">November 2026</option>
+        <option value="2026-12">December 2026</option>
+      </select>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Dashboard Tab -->
+    <section id="tab-dashboard" class="tab-content active">
+      <div class="page-header">
+        <h2>Dashboard</h2>
+        <span class="month-badge" id="dashboardMonthLabel">May 2026</span>
+      </div>
+
+      <div class="summary-cards">
+        <div class="card card-income">
+          <div class="card-icon income-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M11 2L3 9h4v9h8V9h4L11 2z"/></svg>
+          </div>
+          <div class="card-info">
+            <span class="card-label">Total Income</span>
+            <span class="card-value" id="totalIncome">₱0.00</span>
+          </div>
+        </div>
+        <div class="card card-expense">
+          <div class="card-icon expense-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M11 20l8-7h-4V4H7v9H3l8 7z"/></svg>
+          </div>
+          <div class="card-info">
+            <span class="card-label">Total Expenses</span>
+            <span class="card-value" id="totalExpenses">₱0.00</span>
+          </div>
+        </div>
+        <div class="card card-net">
+          <div class="card-icon net-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M4 11h14M11 4v14" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          </div>
+          <div class="card-info">
+            <span class="card-label">Net Balance</span>
+            <span class="card-value" id="netBalance">₱0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <h3>Expense Breakdown</h3>
+          <div class="donut-wrap">
+            <canvas id="expenseDonut"></canvas>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h3>Monthly Income vs Expenses</h3>
+          <canvas id="monthlyTrend"></canvas>
+        </div>
+      </div>
+
+      <div class="card progress-card">
+        <h3>Category Breakdown</h3>
+        <div id="categoryProgress"></div>
+      </div>
+    </section>
+
+    <!-- Income Tab -->
+    <section id="tab-income" class="tab-content">
+      <div class="page-header">
+        <h2>Income</h2>
+        <span class="month-badge" id="incomeMonthLabel">May 2026</span>
+      </div>
+
+      <div class="income-grid">
+        <div class="card income-source-card">
+          <h3>Main Job</h3>
+          <div class="payday-row">
+            <div class="payday-input">
+              <label>15th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="main15" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+            <div class="payday-input">
+              <label>30th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="main30" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card income-source-card">
+          <h3>Graphics</h3>
+          <div class="payday-row">
+            <div class="payday-input">
+              <label>15th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="graphics15" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+            <div class="payday-input">
+              <label>30th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="graphics30" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card income-source-card">
+          <h3>Municipal</h3>
+          <div class="payday-row">
+            <div class="payday-input">
+              <label>15th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="municipal15" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+            <div class="payday-input">
+              <label>30th</label>
+              <div class="input-peso"><span>₱</span><input type="number" id="municipal30" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card additional-funds">
+        <div class="section-header">
+          <h3>Additional Funds</h3>
+          <button class="btn-outline" id="addFundBtn">+ Add Fund</button>
+        </div>
+        <div id="additionalFundsList">
+          <p class="empty-msg">No additional funds added.</p>
+        </div>
+      </div>
+
+      <div class="income-footer">
+        <div class="income-total-label">
+          <span>Total Income</span>
+          <strong id="incomePageTotal">₱0.00</strong>
+        </div>
+        <button class="btn-primary" id="saveIncomeBtn">Save Income</button>
+      </div>
+    </section>
+
+    <!-- Expenses Tab -->
+    <section id="tab-expenses" class="tab-content">
+      <div class="page-header">
+        <h2>Expenses</h2>
+        <span class="month-badge" id="expensesMonthLabel">May 2026</span>
+      </div>
+      <div class="expense-categories" id="expenseCategories"></div>
+    </section>
+
+    <!-- Annual Summary Tab -->
+    <section id="tab-summary" class="tab-content">
+      <div class="page-header">
+        <h2>Annual Summary</h2>
+        <span class="month-badge">May – December 2026</span>
+      </div>
+      <div class="table-wrap">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>May</th><th>Jun</th><th>Jul</th><th>Aug</th>
+              <th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="annualTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Transaction Modal -->
+  <div class="modal-overlay" id="txModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="txModalTitle">Add Transaction</h3>
+        <button class="modal-close" id="txModalClose">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="txDate">
+        </div>
+        <div class="form-group">
+          <label>Particulars</label>
+          <input type="text" id="txParticular" placeholder="Description">
+        </div>
+        <div class="form-group">
+          <label>Amount (₱)</label>
+          <div class="input-peso"><span>₱</span><input type="number" id="txAmount" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="txModalCancel">Cancel</button>
+        <button class="btn-primary" id="txModalSave">Add Transaction</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fund Modal -->
+  <div class="modal-overlay" id="fundModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Additional Fund</h3>
+        <button class="modal-close" id="fundModalClose">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Source / Name</label>
+          <input type="text" id="fundName" placeholder="e.g. John, Mid-year Bonus">
+        </div>
+        <div class="form-group">
+          <label>Amount (₱)</label>
+          <div class="input-peso"><span>₱</span><input type="number" id="fundAmount" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="fundModalCancel">Cancel</button>
+        <button class="btn-primary" id="fundModalSave">Add Fund</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
