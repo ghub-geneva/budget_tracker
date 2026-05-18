@@ -255,7 +255,7 @@ function renderExpenses(md) {
   }).join('');
 
   const c    = CATEGORIES.find(c => c.key === activeExpenseCategory);
-  const txs  = md.expenses[c.key] || [];
+  const txs  = (md.expenses[c.key] || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   const total = txs.reduce((s, tx) => s + (+tx.amount || 0), 0);
   const txHtml = txs.length === 0
     ? '<p class="empty-msg">No transactions yet.</p>'
