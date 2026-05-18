@@ -564,8 +564,8 @@ function migrateRestoreMisc() {
 
 // ── Seed Data ─────────────────────────────────────────────────
 function seedData() {
-  const existing = localStorage.getItem('budgetTracker2026');
-  if (existing && existing !== '{}') return;
+  const SEED_VERSION = '3';
+  if (localStorage.getItem('_seedVersion') === SEED_VERSION) return;
   const seed = {
     '2026-05': {
       income: {
@@ -655,6 +655,7 @@ function seedData() {
     }
   };
   localStorage.setItem('budgetTracker2026', JSON.stringify(seed));
+  localStorage.setItem('_seedVersion', SEED_VERSION);
 }
 
 // ── Init ──────────────────────────────────────────────────────

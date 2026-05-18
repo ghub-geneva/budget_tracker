@@ -1297,16 +1297,19 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .progress-label { font-size: 12px; }
   .progress-amount { font-size: 12px; }
 
-  /* Expenses topbar: stack vertically */
+  /* Expenses topbar: stack vertically, grand total on top */
   .expenses-topbar { flex-direction: column; gap: 10px; }
   .expenses-grand-total {
     min-width: unset;
     align-self: stretch;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: row;
     justify-content: space-between;
     padding: 10px 14px;
+    order: -1;
   }
+  .expenses-grand-label { font-size: 12px; }
+  .expenses-grand-amount { font-size: 18px; margin-top: 0; }
 
   /* Category tabs: horizontal scroll */
   .cat-tabs {
@@ -1317,16 +1320,23 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     scrollbar-width: none;
   }
   .cat-tabs::-webkit-scrollbar { display: none; }
-  .cat-tab { flex-shrink: 0; }
+  .cat-tab { flex-shrink: 0; padding: 9px 12px; }
+  .cat-tab-label { font-size: 12px; }
+  .cat-tab-total { font-size: 11px; }
+
+  /* Category section touch targets */
+  .btn-add-tx { padding: 8px 14px; font-size: 13px; }
+  .btn-icon { padding: 6px 8px; font-size: 15px; }
 
   /* Transaction rows */
   .tx-item {
-    grid-template-columns: 72px 1fr 88px 28px;
+    grid-template-columns: 68px 1fr 86px 32px;
     gap: 6px;
     font-size: 12px;
-    padding: 9px 0;
+    padding: 10px 0;
   }
   .tx-date { font-size: 11px; }
+  .tx-list { padding: 0 14px; }
 
   /* Income grid */
   .income-grid { grid-template-columns: 1fr; }
