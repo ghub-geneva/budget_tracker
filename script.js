@@ -193,6 +193,7 @@ function renderTrend(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { position: 'top', labels: { usePointStyle: true, pointStyleWidth: 10, font: { size: 12 }, color: '#94a3b8' } },
         tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.parsed.y)}` } }
@@ -203,7 +204,6 @@ function renderTrend(data) {
       }
     }
   });
-
 }
 
 function renderDailyChart(md) {
