@@ -25,8 +25,9 @@ let activeExpenseCategory = 'bills';
 let txCategory            = null;
 let donutChart            = null;
 let trendChart            = null;
-let annualOverviewChart   = null;
-let annualStackedChart    = null;
+let annualOverviewChart      = null;
+let annualStackedChart       = null;
+let annualMonthBreakdown     = null;
 
 // ── Storage ──────────────────────────────────────────────────
 function loadData() {
@@ -331,12 +332,48 @@ function renderSummary(data) {
     }
   });
 
-  // Chart 2: Horizontal bar — category breakdown for active month
-  const md = getMonthData(data, activeMonth);
-  const catTotals = CATEGORIES.map(c => categoryTotal(md, c.key));
+  // Chart 2: Line chart — expense category trends per month
   if (annualStackedChart) { annualStackedChart.destroy(); annualStackedChart = null; }
   annualStackedChart = new Chart(
     document.getElementById('annualStackedChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: SHORT_LABELS,
+      datasets: CATEGORIES.map(c => ({
+        label: c.label,
+        data: MONTHS.map(m => categoryTotal(getMonthData(data, m), c.key)),
+        borderColor: c.color,
+        backgroundColor: c.color + '22',
+        borderWidth: 2.5,
+        pointBackgroundColor: c.color,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        tension: 0.3,
+        fill: false
+      }))
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y > 0 ? ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` : null }, filter: item => item.parsed.y > 0 }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b' } },
+        y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
+      }
+    }
+  });
+
+  // Chart 3: Horizontal bar — category breakdown for active month
+  const md = getMonthData(data, activeMonth);
+  const catTotals = CATEGORIES.map(c => categoryTotal(md, c.key));
+  const titleEl = document.getElementById('monthBreakdownTitle');
+  if (titleEl) titleEl.textContent = `Expense Breakdown — ${MONTH_LABELS[activeMonth]}`;
+  if (annualMonthBreakdown) { annualMonthBreakdown.destroy(); annualMonthBreakdown = null; }
+  annualMonthBreakdown = new Chart(
+    document.getElementById('annualMonthBreakdown').getContext('2d'), {
     type: 'bar',
     data: {
       labels: CATEGORIES.map(c => c.label),
@@ -346,7 +383,7 @@ function renderSummary(data) {
         backgroundColor: CATEGORIES.map(c => c.color + 'cc'),
         borderColor: CATEGORIES.map(c => c.color),
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 6,
         borderSkipped: false
       }]
     },
@@ -359,7 +396,7 @@ function renderSummary(data) {
       },
       scales: {
         x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } },
-        y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 13 } } }
+        y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 13, weight: '500' } } }
       }
     }
   });
