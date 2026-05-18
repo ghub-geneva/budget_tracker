@@ -39,6 +39,10 @@
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v1H1V3zm0 3h14v1H1V6zm0 3h14v1H1V9zm0 3h9v1H1v-1z"/></svg>
         Annual Summary
       </button>
+      <button class="nav-item" data-tab="admin">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 100 6A3 3 0 008 1zM3 13c0-2.76 2.24-5 5-5s5 2.24 5 5H3z"/></svg>
+        Admin
+      </button>
     </nav>
   </aside>
 
@@ -213,6 +217,303 @@
           <tbody id="annualTableBody"></tbody>
         </table>
       </div>
+    </section>
+
+    <!-- Admin Tab -->
+    <section id="tab-admin" class="tab-content">
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-admin="changelog">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M7.5 1a6.5 6.5 0 100 13A6.5 6.5 0 007.5 1zm.5 3.5v4l3 1.8-.8 1.2-3.7-2.2V4.5h1.5z"/></svg>
+          Changelog
+        </button>
+        <button class="admin-tab" data-admin="documentation">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M3 1h9a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 2v2h7V3H4zm0 4v1h7V7H4zm0 3v1h5v-1H4z"/></svg>
+          Documentation
+        </button>
+        <button class="admin-tab" data-admin="workflow">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M2 3h4v4H2V3zm0 5h4v4H2V8zm5-5h4v4H7V3zm0 5h4v4H7V8z"/></svg>
+          Workflow
+        </button>
+      </div>
+
+      <!-- Changelog -->
+      <div class="admin-panel active" id="admin-changelog">
+        <div class="admin-section-header">
+          <h3>Changelog</h3>
+          <span class="admin-badge">4 releases</span>
+        </div>
+
+        <div class="changelog-list">
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v1.4.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Admin Page</h4>
+            <ul>
+              <li>Added Admin section with Changelog, Documentation, and Workflow tabs</li>
+              <li>Full release history with version tags</li>
+              <li>Step-by-step workflow guide for monthly budget tracking</li>
+              <li>Complete feature documentation for all sections</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v1.3.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Annual Summary Charts</h4>
+            <ul>
+              <li>Added Income vs Expenses bar chart with Net Balance line overlay</li>
+              <li>Added stacked bar chart for expense category breakdown by month</li>
+              <li>Charts use interactive tooltips showing ₱ values on hover</li>
+              <li>Fixed Annual Summary table headers to show Jan–Dec</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v1.2.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-improvement">Improvement</span>
+            </div>
+            <h4>Dark Theme &amp; Layout Overhaul</h4>
+            <ul>
+              <li>Full dark theme applied across all pages and modals</li>
+              <li>Moved Active Month selector from sidebar to persistent top bar</li>
+              <li>Expense categories now use clickable tab menu — only selected category is shown</li>
+              <li>Chart axis labels and legends updated for dark background readability</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v1.1.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-improvement">Improvement</span>
+            </div>
+            <h4>Full Year Coverage</h4>
+            <ul>
+              <li>Extended month range from May–December to January–December 2026</li>
+              <li>Monthly trend bar chart now spans all 12 months</li>
+              <li>Active Month selector defaults to January</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v1.0.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-release">Release</span>
+            </div>
+            <h4>Initial Release</h4>
+            <ul>
+              <li>Dashboard with Total Income, Total Expenses, and Net Balance cards</li>
+              <li>Expense breakdown donut chart and monthly trend bar chart</li>
+              <li>Income tracker: Main Job, Graphics, Municipal — 15th &amp; 30th paydays</li>
+              <li>Additional Funds section for bonuses and external income</li>
+              <li>6 expense categories: Bills, Debts, Needs, Wants, Miscellaneous, Unexpected</li>
+              <li>Annual Summary table with month-by-month breakdown</li>
+              <li>Data persisted in browser localStorage</li>
+              <li>Deployed to Vercel with GitHub auto-deploy</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Documentation -->
+      <div class="admin-panel" id="admin-documentation">
+        <div class="admin-section-header">
+          <h3>Documentation</h3>
+          <span class="admin-badge">5 sections</span>
+        </div>
+
+        <div class="doc-grid">
+
+          <div class="doc-card">
+            <div class="doc-card-icon" style="background:rgba(52,211,153,0.12);color:#34d399">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 8h3v8h10V8h3L10 2z"/></svg>
+            </div>
+            <h4>Dashboard</h4>
+            <p>The Dashboard gives you a real-time snapshot of the selected month. The three hero cards show <strong>Total Income</strong>, <strong>Total Expenses</strong>, and <strong>Net Balance</strong> (green when positive, red when in deficit).</p>
+            <ul>
+              <li><strong>Expense Breakdown</strong> — donut chart showing each category's share of total spending</li>
+              <li><strong>Monthly Trend</strong> — bar chart comparing income vs expenses for all 12 months</li>
+              <li><strong>Category Breakdown</strong> — progress bars showing each category's peso amount and percentage</li>
+            </ul>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-icon" style="background:rgba(52,211,153,0.12);color:#34d399">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a4 4 0 100 8 4 4 0 000-8zm-7 17c0-3.87 3.13-7 7-7s7 3.13 7 7H3z"/></svg>
+            </div>
+            <h4>Income</h4>
+            <p>Track salary from three sources, each with a <strong>15th</strong> and <strong>30th</strong> payday slot:</p>
+            <ul>
+              <li><strong>Main Job</strong> — primary employment salary</li>
+              <li><strong>Graphics</strong> — freelance / design income</li>
+              <li><strong>Municipal</strong> — government or municipal pay</li>
+            </ul>
+            <p>Use <strong>Additional Funds</strong> for one-time income like bonuses, mid-year pay, or money received from others. Click <em>Save Income</em> to persist the values for the selected month.</p>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-icon" style="background:rgba(248,113,113,0.12);color:#f87171">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h14v2H3V3zm0 4h14v11H3V7zm3 2v7h2V9H6zm4 0v7h2V9h-2z"/></svg>
+            </div>
+            <h4>Expenses</h4>
+            <p>Expenses are split into 6 categories. Select a category tab to view and add transactions for it.</p>
+            <ul>
+              <li><strong>Bills</strong> — recurring fixed costs (utilities, subscriptions, gas)</li>
+              <li><strong>Debts</strong> — loans, credit card payments, buy-now-pay-later</li>
+              <li><strong>Needs</strong> — food, groceries, laundry, transport, household essentials</li>
+              <li><strong>Wants</strong> — dining out, snacks, entertainment, non-essentials</li>
+              <li><strong>Miscellaneous</strong> — allowances, gifts, church offerings, personal care</li>
+              <li><strong>Unexpected</strong> — medical, emergency repairs, unplanned costs</li>
+            </ul>
+            <p>Each transaction requires a <em>date</em>, <em>description</em>, and <em>amount</em>. Totals update instantly.</p>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-icon" style="background:rgba(165,180,252,0.12);color:#a5b4fc">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2 4h16v2H2V4zm0 5h16v2H2V9zm0 5h10v2H2v-2z"/></svg>
+            </div>
+            <h4>Annual Summary</h4>
+            <p>The Annual Summary shows the full picture across all 12 months of 2026.</p>
+            <ul>
+              <li><strong>Income vs Expenses chart</strong> — grouped bars with a net balance trend line</li>
+              <li><strong>Category breakdown chart</strong> — stacked bars showing how each expense type contributes per month</li>
+              <li><strong>Summary table</strong> — row-by-row breakdown of every category, total expenses, and net balance for each month with an annual total column</li>
+            </ul>
+            <p>The Active Month selector does not affect this page — it always shows the full year.</p>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-icon" style="background:rgba(129,140,248,0.12);color:#818cf8">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 100 18A9 9 0 0010 1zm1 13H9v-5h2v5zm0-7H9V5h2v2z"/></svg>
+            </div>
+            <h4>Data &amp; Storage</h4>
+            <p>All budget data is saved automatically in your browser's <strong>localStorage</strong> — no account or internet connection required to view your data.</p>
+            <ul>
+              <li>Data persists across page refreshes and browser restarts</li>
+              <li>Data is stored only on this device and browser — it does not sync across devices</li>
+              <li>Clearing browser data or site storage will erase all entries</li>
+              <li>Each month's data is stored independently under the key <code>budgetTracker2026</code></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Workflow -->
+      <div class="admin-panel" id="admin-workflow">
+        <div class="admin-section-header">
+          <h3>Workflow</h3>
+          <span class="admin-badge">Monthly Process</span>
+        </div>
+
+        <div class="workflow-intro">
+          <p>Follow this process at the start and throughout each month to keep your budget tracker accurate and up to date.</p>
+        </div>
+
+        <div class="workflow-steps">
+
+          <div class="workflow-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Select the Active Month</h4>
+              <p>At the top of any page, use the <strong>Active Month</strong> dropdown to select the month you are tracking. All Income and Expense entries are saved per month independently.</p>
+              <div class="step-tip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
+                Do this first — entering data without selecting the right month will save it to the wrong month.
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Log Your Income</h4>
+              <p>Go to the <strong>Income</strong> tab and fill in your salary amounts for each source:</p>
+              <ul>
+                <li>Enter the <strong>15th</strong> payday amount when you receive your mid-month salary</li>
+                <li>Enter the <strong>30th</strong> payday amount at end of month</li>
+                <li>Add any <strong>Additional Funds</strong> (bonuses, borrowed money, mid-year pay) using the <em>+ Add Fund</em> button</li>
+                <li>Click <strong>Save Income</strong> to store all amounts for the month</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="workflow-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Record Expenses Daily or Weekly</h4>
+              <p>Go to the <strong>Expenses</strong> tab and log transactions as they happen or in batches.</p>
+              <ul>
+                <li>Select the correct <strong>category tab</strong> (Bills, Debts, Needs, Wants, Miscellaneous, Unexpected)</li>
+                <li>Click <strong>+ Add</strong> to open the transaction form</li>
+                <li>Enter the date, a short description, and the amount in ₱</li>
+                <li>Repeat for each expense — totals update immediately</li>
+              </ul>
+              <div class="step-tip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
+                When unsure which category to use: Bills = fixed recurring, Needs = essentials, Wants = non-essentials, Unexpected = unplanned.
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>Review the Dashboard</h4>
+              <p>Switch to the <strong>Dashboard</strong> at any time to see your current standing for the month:</p>
+              <ul>
+                <li>Check the <strong>Net Balance</strong> card — green means you are within budget, red means overspent</li>
+                <li>Review the <strong>Expense Breakdown</strong> donut to identify which categories are consuming the most</li>
+                <li>Use the <strong>Category Breakdown</strong> progress bars to spot runaway spending</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="workflow-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+              <h4>Close Out the Month</h4>
+              <p>At the end of each month, do a final review before moving to the next:</p>
+              <ul>
+                <li>Make sure all bills and debts for the month are entered</li>
+                <li>Verify the <strong>Total Income</strong> matches your actual received pay</li>
+                <li>Note any categories that went over budget for adjustment next month</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="workflow-step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+              <h4>Check the Annual Summary</h4>
+              <p>Visit <strong>Annual Summary</strong> periodically to see the bigger picture:</p>
+              <ul>
+                <li>The <strong>Income vs Expenses</strong> chart shows months where you saved vs overspent</li>
+                <li>The <strong>stacked category chart</strong> reveals spending patterns across the year</li>
+                <li>The <strong>Net Balance row</strong> in the table shows your cumulative financial position</li>
+              </ul>
+              <div class="step-tip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
+                Use the annual charts to plan ahead — if Miscellaneous is consistently high, consider setting a personal limit.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </section>
 
   </main>

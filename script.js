@@ -442,7 +442,7 @@ function escHtml(s) {
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
-  const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary' };
+  const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary', admin: 'Admin' };
 
   // Tab navigation
   document.querySelectorAll('.nav-item').forEach(btn => {
@@ -529,6 +529,14 @@ document.addEventListener('DOMContentLoaded', () => {
       render();
       showToast('Transaction removed');
     }
+  });
+
+  // Admin sub-tabs
+  document.querySelectorAll('.admin-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.toggle('active', p.id === `admin-${btn.dataset.admin}`));
+    });
   });
 
   // Keyboard: Escape closes modals
