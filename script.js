@@ -135,6 +135,7 @@ function renderDashboard(data, md) {
 
   renderDonut(md, exp);
   renderTrend(data);
+  renderDailyChart(md);
 }
 
 function renderDonut(md, exp) {
@@ -203,7 +204,6 @@ function renderTrend(data) {
     }
   });
 
-  renderDailyChart(md);
 }
 
 function renderDailyChart(md) {
@@ -241,6 +241,7 @@ function renderDailyChart(md) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: { label: ctx => ctx.parsed.y > 0 ? ` ${fmt(ctx.parsed.y)}` : ' No expenses' } }
