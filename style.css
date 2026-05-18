@@ -76,20 +76,36 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 2px;
+}
+
+.nav-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: none;
   border: none;
   border-radius: 8px;
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   text-align: left;
