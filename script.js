@@ -260,16 +260,17 @@ function renderExpenses(md) {
   }, 0);
 
   const c    = CATEGORIES.find(c => c.key === activeExpenseCategory);
-  const txs  = (md.expenses[c.key] || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const rawTxs = md.expenses[c.key] || [];
+  const txs  = rawTxs.map((tx, origIdx) => ({ ...tx, origIdx })).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   const total = txs.reduce((s, tx) => s + (+tx.amount || 0), 0);
   const txHtml = txs.length === 0
     ? '<p class="empty-msg">No transactions yet.</p>'
-    : txs.map((tx, i) => `
+    : txs.map((tx) => `
         <div class="tx-item">
           <span class="tx-date">${fmtDate(tx.date)}</span>
           <span class="tx-particular">${escHtml(tx.particular)}</span>
           <span class="tx-amount">${fmt(tx.amount)}</span>
-          <button class="btn-icon remove-tx" data-cat="${c.key}" data-idx="${i}" title="Remove">&#x2715;</button>
+          <button class="btn-icon remove-tx" data-cat="${c.key}" data-idx="${tx.origIdx}" title="Remove">&#x2715;</button>
         </div>`).join('');
 
   container.innerHTML = `
