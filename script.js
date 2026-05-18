@@ -331,41 +331,35 @@ function renderSummary(data) {
     }
   });
 
-  // Chart 2: Line chart — expense category trends per month
+  // Chart 2: Horizontal bar — category breakdown for active month
+  const md = getMonthData(data, activeMonth);
+  const catTotals = CATEGORIES.map(c => categoryTotal(md, c.key));
   if (annualStackedChart) { annualStackedChart.destroy(); annualStackedChart = null; }
   annualStackedChart = new Chart(
     document.getElementById('annualStackedChart').getContext('2d'), {
-    type: 'line',
+    type: 'bar',
     data: {
-      labels: SHORT_LABELS,
-      datasets: CATEGORIES.map(c => ({
-        label: c.label,
-        data: MONTHS.map(m => categoryTotal(getMonthData(data, m), c.key)),
-        borderColor: c.color,
-        backgroundColor: c.color + '22',
-        borderWidth: 2.5,
-        pointBackgroundColor: c.color,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        tension: 0.3,
-        fill: false
-      }))
+      labels: CATEGORIES.map(c => c.label),
+      datasets: [{
+        label: 'Amount',
+        data: catTotals,
+        backgroundColor: CATEGORIES.map(c => c.color + 'cc'),
+        borderColor: CATEGORIES.map(c => c.color),
+        borderWidth: 1,
+        borderRadius: 5,
+        borderSkipped: false
+      }]
     },
     options: {
+      indexAxis: 'y',
       responsive: true,
-      interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
-        tooltip: {
-          callbacks: {
-            label: ctx => ctx.parsed.y > 0 ? ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` : null,
-            filter: item => item.parsed.y > 0
-          }
-        }
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.parsed.x)}` } }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#64748b' } },
-        y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
+        x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } },
+        y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 13 } } }
       }
     }
   });
