@@ -13,7 +13,7 @@
     <div class="sidebar-header">
       <div class="logo">
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="8" fill="rgba(255,255,255,0.2)"/>
+          <rect width="28" height="28" rx="8" fill="rgba(255,255,255,0.15)"/>
           <path d="M8 14h4v6H8v-6zm4-4h4v10h-4V10zm4-4h4v14h-4V6z" fill="white"/>
         </svg>
         <div>
@@ -40,34 +40,34 @@
         Annual Summary
       </button>
     </nav>
-    <div class="sidebar-month">
-      <label>Active Month</label>
-      <select id="monthSelect">
-        <option value="2026-01">January 2026</option>
-        <option value="2026-02">February 2026</option>
-        <option value="2026-03">March 2026</option>
-        <option value="2026-04">April 2026</option>
-        <option value="2026-05">May 2026</option>
-        <option value="2026-06">June 2026</option>
-        <option value="2026-07">July 2026</option>
-        <option value="2026-08">August 2026</option>
-        <option value="2026-09">September 2026</option>
-        <option value="2026-10">October 2026</option>
-        <option value="2026-11">November 2026</option>
-        <option value="2026-12">December 2026</option>
-      </select>
-    </div>
   </aside>
 
   <main class="main">
 
+    <!-- Top Bar -->
+    <div class="topbar">
+      <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      <div class="topbar-month">
+        <label for="monthSelect">Active Month</label>
+        <select id="monthSelect">
+          <option value="2026-01">January 2026</option>
+          <option value="2026-02">February 2026</option>
+          <option value="2026-03">March 2026</option>
+          <option value="2026-04">April 2026</option>
+          <option value="2026-05">May 2026</option>
+          <option value="2026-06">June 2026</option>
+          <option value="2026-07">July 2026</option>
+          <option value="2026-08">August 2026</option>
+          <option value="2026-09">September 2026</option>
+          <option value="2026-10">October 2026</option>
+          <option value="2026-11">November 2026</option>
+          <option value="2026-12">December 2026</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Dashboard Tab -->
     <section id="tab-dashboard" class="tab-content active">
-      <div class="page-header">
-        <h2>Dashboard</h2>
-        <span class="month-badge" id="dashboardMonthLabel">May 2026</span>
-      </div>
-
       <div class="summary-cards">
         <div class="card card-income">
           <div class="card-icon income-icon">
@@ -119,11 +119,6 @@
 
     <!-- Income Tab -->
     <section id="tab-income" class="tab-content">
-      <div class="page-header">
-        <h2>Income</h2>
-        <span class="month-badge" id="incomeMonthLabel">May 2026</span>
-      </div>
-
       <div class="income-grid">
         <div class="card income-source-card">
           <h3>Main Job</h3>
@@ -187,24 +182,17 @@
 
     <!-- Expenses Tab -->
     <section id="tab-expenses" class="tab-content">
-      <div class="page-header">
-        <h2>Expenses</h2>
-        <span class="month-badge" id="expensesMonthLabel">May 2026</span>
-      </div>
       <div class="expense-categories" id="expenseCategories"></div>
     </section>
 
     <!-- Annual Summary Tab -->
     <section id="tab-summary" class="tab-content">
-      <div class="page-header">
-        <h2>Annual Summary</h2>
-        <span class="month-badge">January – December 2026</span>
-      </div>
       <div class="table-wrap">
         <table class="summary-table">
           <thead>
             <tr>
               <th>Category</th>
+              <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th>
               <th>May</th><th>Jun</th><th>Jul</th><th>Aug</th>
               <th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
               <th>Total</th>

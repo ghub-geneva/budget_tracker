@@ -154,7 +154,7 @@ function renderDonut(md, exp) {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { padding: 14, font: { size: 11 }, usePointStyle: true, pointStyleWidth: 8 }
+          labels: { padding: 14, font: { size: 11 }, usePointStyle: true, pointStyleWidth: 8, color: '#94a3b8' }
         },
         tooltip: {
           callbacks: {
@@ -188,12 +188,12 @@ function renderTrend(data) {
     options: {
       responsive: true,
       plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+        legend: { position: 'top', labels: { usePointStyle: true, pointStyleWidth: 10, font: { size: 12 }, color: '#94a3b8' } },
         tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.parsed.y)}` } }
       },
       scales: {
-        y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString('en-PH') }, grid: { color: '#f1f5f9' } },
-        x: { grid: { display: false } }
+        y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString('en-PH'), color: '#64748b' }, grid: { color: '#1e293b' } },
+        x: { grid: { display: false }, ticks: { color: '#64748b' } }
       }
     }
   });
@@ -363,12 +363,15 @@ function escHtml(s) {
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
+  const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary' };
+
   // Tab navigation
   document.querySelectorAll('.nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
       activeTab = btn.dataset.tab;
       document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b === btn));
       document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === `tab-${activeTab}`));
+      document.getElementById('topbarTitle').textContent = TAB_TITLES[activeTab] || '';
       render();
     });
   });
