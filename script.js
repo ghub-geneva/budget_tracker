@@ -25,9 +25,8 @@ let activeExpenseCategory = 'bills';
 let txCategory            = null;
 let donutChart            = null;
 let trendChart            = null;
-let annualOverviewChart      = null;
-let annualStackedChart       = null;
-let annualMonthBreakdown     = null;
+let annualOverviewChart   = null;
+let annualStackedChart    = null;
 
 // ── Storage ──────────────────────────────────────────────────
 function loadData() {
@@ -362,41 +361,6 @@ function renderSummary(data) {
       scales: {
         x: { grid: { display: false }, ticks: { color: '#64748b' } },
         y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
-      }
-    }
-  });
-
-  // Chart 3: Horizontal bar — category breakdown for active month
-  const md = getMonthData(data, activeMonth);
-  const catTotals = CATEGORIES.map(c => categoryTotal(md, c.key));
-  const titleEl = document.getElementById('monthBreakdownTitle');
-  if (titleEl) titleEl.textContent = `Expense Breakdown — ${MONTH_LABELS[activeMonth]}`;
-  if (annualMonthBreakdown) { annualMonthBreakdown.destroy(); annualMonthBreakdown = null; }
-  annualMonthBreakdown = new Chart(
-    document.getElementById('annualMonthBreakdown').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: CATEGORIES.map(c => c.label),
-      datasets: [{
-        label: 'Amount',
-        data: catTotals,
-        backgroundColor: CATEGORIES.map(c => c.color + 'cc'),
-        borderColor: CATEGORIES.map(c => c.color),
-        borderWidth: 1,
-        borderRadius: 6,
-        borderSkipped: false
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.parsed.x)}` } }
-      },
-      scales: {
-        x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } },
-        y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 13, weight: '500' } } }
       }
     }
   });
