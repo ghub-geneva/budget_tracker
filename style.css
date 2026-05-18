@@ -1196,3 +1196,157 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .charts-row { grid-template-columns: 1fr; }
   .progress-row { grid-template-columns: 140px 1fr 110px; }
 }
+
+/* ── Mobile (≤ 640px) ── */
+@media (max-width: 640px) {
+  /* Sidebar becomes a fixed bottom nav bar */
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    flex-direction: row;
+  }
+
+  .sidebar-header { display: none; }
+
+  .sidebar-nav {
+    flex-direction: row;
+    padding: 4px 4px;
+    justify-content: space-around;
+    align-items: stretch;
+    width: 100%;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .nav-main {
+    flex-direction: row;
+    gap: 0;
+    flex: 1;
+    justify-content: space-around;
+  }
+
+  .nav-bottom {
+    flex-direction: row;
+    border-top: none;
+    border-left: 1px solid var(--border);
+    padding: 0 4px;
+    gap: 0;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 8px;
+    font-size: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    border-radius: 6px;
+  }
+
+  .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  /* Main area: no sidebar offset, padding for bottom nav */
+  .main {
+    margin-left: 0;
+    padding-bottom: 68px;
+  }
+
+  /* Topbar: tighter on mobile */
+  .topbar { padding: 0 14px; height: 52px; }
+  .topbar-title { font-size: 15px; }
+  .topbar-month label { display: none; }
+  .topbar-month select { font-size: 12px; padding: 6px 28px 6px 10px; }
+
+  /* Content padding */
+  .tab-content { padding: 14px 14px; }
+
+  /* Summary cards: single column */
+  .summary-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .summary-cards .card { padding: 14px 16px; }
+  .card-icon { width: 42px; height: 42px; }
+  .card-value { font-size: 18px; }
+
+  /* Charts: single column */
+  .charts-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  /* Annual summary charts: single column */
+  .summary-charts-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Category progress bar */
+  .progress-row { grid-template-columns: 110px 1fr 80px; gap: 10px; }
+  .progress-label { font-size: 12px; }
+  .progress-amount { font-size: 12px; }
+
+  /* Expenses topbar: stack vertically */
+  .expenses-topbar { flex-direction: column; gap: 10px; }
+  .expenses-grand-total {
+    min-width: unset;
+    align-self: stretch;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 14px;
+  }
+
+  /* Category tabs: horizontal scroll */
+  .cat-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab { flex-shrink: 0; }
+
+  /* Transaction rows */
+  .tx-item {
+    grid-template-columns: 72px 1fr 88px 28px;
+    gap: 6px;
+    font-size: 12px;
+    padding: 9px 0;
+  }
+  .tx-date { font-size: 11px; }
+
+  /* Income grid */
+  .income-grid { grid-template-columns: 1fr; }
+  .payday-row { flex-direction: column; }
+
+  /* Income footer */
+  .income-footer { flex-direction: column; gap: 10px; }
+  .income-total-label strong { font-size: 18px; }
+
+  /* Doc grid: single column */
+  .doc-grid { grid-template-columns: 1fr; }
+
+  /* Admin tabs: scrollable on mobile */
+  .admin-tabs { overflow-x: auto; flex-wrap: nowrap; gap: 0; }
+  .admin-tab { flex-shrink: 0; padding: 10px 14px; font-size: 12.5px; }
+
+  /* Toast: full-width on mobile */
+  .toast { left: 14px; right: 14px; bottom: 76px; }
+
+  /* Modal: full width with no padding overflow */
+  .modal-overlay { padding: 12px; align-items: flex-end; }
+  .modal { border-radius: 14px 14px 12px 12px; }
+}
