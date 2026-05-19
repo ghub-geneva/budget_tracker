@@ -158,6 +158,12 @@ function switchYear(year) {
     btn.classList.toggle('active', +btn.dataset.year === year);
   });
 
+  // Navigate to Annual Summary
+  activeTab = 'summary';
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === 'summary'));
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === 'tab-summary'));
+  document.getElementById('topbarTitle').textContent = 'Annual Summary';
+
   render();
 }
 
