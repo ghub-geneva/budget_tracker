@@ -693,8 +693,40 @@ function seedData() {
   saveData(seed);
 }
 
+// ── Auth ──────────────────────────────────────────────────────
+function initAuth() {
+  const overlay = document.getElementById('loginOverlay');
+  const input   = document.getElementById('loginInput');
+  const btn     = document.getElementById('loginBtn');
+  const errMsg  = document.getElementById('loginError');
+  const PWD     = 'Batinawong14';
+
+  if (sessionStorage.getItem('_auth') === '1') {
+    overlay.classList.add('hidden');
+    return Promise.resolve();
+  }
+
+  return new Promise(resolve => {
+    function attempt() {
+      if (input.value === PWD) {
+        sessionStorage.setItem('_auth', '1');
+        overlay.classList.add('hidden');
+        resolve();
+      } else {
+        errMsg.textContent = 'Incorrect password. Try again.';
+        input.value = '';
+        input.focus();
+      }
+    }
+    btn.addEventListener('click', attempt);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+    input.focus();
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
   const fromSupabase = await initData();
   if (!fromSupabase) {
     migrateAddFood();
