@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -123,10 +123,7 @@
 
     <!-- Dashboard Tab -->
     <section id="tab-dashboard" class="tab-content active">
-      <!-- Insights -->
-      <div id="insightsCard" class="insights-card"></div>
-
-      <!-- Month-over-Month -->
+      <!-- Summary Cards -->
       <div class="summary-cards">
         <div class="card card-income">
           <div class="card-icon income-icon">
@@ -156,6 +153,9 @@
           </div>
         </div>
       </div>
+
+      <!-- Insights -->
+      <div id="insightsCard" class="insights-card"></div>
 
       <div class="charts-row">
         <div class="chart-box">
