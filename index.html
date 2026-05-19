@@ -311,10 +311,57 @@
       <div class="admin-panel active" id="admin-changelog">
         <div class="admin-section-header">
           <h3>Changelog</h3>
-          <span class="admin-badge">9 releases</span>
+          <span class="admin-badge">12 releases</span>
         </div>
 
         <div class="changelog-list">
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v3.0.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Data &amp; Insights</h4>
+            <ul>
+              <li>Added Monthly Insights card at the top of the Dashboard (above summary cards)</li>
+              <li>Insights auto-generate 4 bullets: net balance status, biggest expense category, biggest month-over-month change, and income utilization %</li>
+              <li>Added Month-over-Month comparison table in Annual Summary — shows last month vs this month per category with color-coded ↑↓ change column</li>
+              <li>Added Budget Limits per category in Admin → Budget Limits tab</li>
+              <li>Progress bar appears in Expenses category header when a limit is set — turns yellow at 70%, red at 90%</li>
+              <li>Summary cards (Income / Expenses / Net Balance) reordered to appear above Monthly Insights</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.6.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Year Picker (2026–2030)</h4>
+            <ul>
+              <li>Added year selector dropdown below the Budget Tracker logo in the sidebar</li>
+              <li>Supports years 2026–2030; each year has its own independent data</li>
+              <li>Selecting a year automatically navigates to Annual Summary</li>
+              <li>Month dropdown repopulates to the selected year's months</li>
+              <li>Mobile: year selector appears in the top bar next to the month dropdown</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.5.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-fix">Fix</span>
+            </div>
+            <h4>Mobile Expenses Fixes</h4>
+            <ul>
+              <li>Fixed transaction amounts not showing on iPhone — iOS Safari grid min-width bug resolved</li>
+              <li>Added scroll hint on category tabs so the last tab is no longer hard-clipped</li>
+              <li>Improved category tab sizing, touch target sizes for Add/Remove buttons, and transaction row layout on small screens</li>
+            </ul>
+          </div>
 
           <div class="changelog-item">
             <div class="changelog-meta">
