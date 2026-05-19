@@ -635,7 +635,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 .tx-item:last-child { border-bottom: none; }
 .tx-date { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.tx-particular { font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-particular { font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .tx-amount { font-weight: 700; text-align: right; color: var(--text); }
 
 /* ── Annual Summary Charts ── */
@@ -1513,6 +1513,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: 4px;
+    padding-right: 16px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 6px;
