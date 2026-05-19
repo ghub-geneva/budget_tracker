@@ -2,7 +2,7 @@
 
 const MONTH_NAMES_LIST = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const SHORT_LABELS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const YEARS            = [2026, 2027, 2028, 2029, 2030];
+const STORAGE_KEY      = 'budgetTracker2026';
 
 let activeYear = 2026;
 
@@ -52,7 +52,7 @@ function loadData() { return cachedData; }
 
 function saveData(data) {
   cachedData = data;
-  localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   syncToSupabase(data);
 }
 
@@ -70,14 +70,12 @@ async function initData() {
     const { data: rows, error } = await sb.from('budget_months').select('month, data');
     if (!error && rows && rows.length > 0) {
       rows.forEach(r => { cachedData[r.month] = r.data; });
-      localStorage.setItem('budgetTracker2026', JSON.stringify(cachedData));
-      // Mark all local migrations as done — Supabase is the source of truth
-      ['_foodMigrated','_miscRestored','_restoredV3'].forEach(k => localStorage.setItem(k, '1'));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedData));
       return true; // loaded from Supabase
     }
   } catch (e) { console.warn('Supabase unavailable, using local cache:', e.message); }
   // Fallback: localStorage cache
-  try { cachedData = JSON.parse(localStorage.getItem('budgetTracker2026') || '{}'); }
+  try { cachedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
   catch { cachedData = {}; }
   return false;
 }
@@ -118,8 +116,7 @@ function fmtDate(d) {
   if (!d) return '';
   const parts = d.split('-');
   if (parts.length !== 3) return d;
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[+parts[1]-1]} ${+parts[2]}`;
+  return `${SHORT_LABELS[+parts[1]-1]} ${+parts[2]}`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────
@@ -199,14 +196,14 @@ function renderInsights(data, md, month) {
   });
 
   // Biggest MoM change by %
-  let changeCat = null, changePct = 0, changeAbs = 0;
+  let changeCat = null, changePct = 0;
   CATEGORIES.forEach(c => {
     const curr = categoryTotal(md, c.key);
     const prev = categoryTotal(pm, c.key);
     if (prev > 0) {
       const pct = (curr - prev) / prev * 100;
       if (Math.abs(pct) > Math.abs(changePct)) {
-        changePct = pct; changeAbs = curr - prev; changeCat = c;
+        changePct = pct; changeCat = c;
       }
     }
   });
@@ -253,6 +250,13 @@ function renderInsights(data, md, month) {
     </div>`;
 }
 
+function diffCell(diff, pct) {
+  if (diff === 0 && pct === 0) return `<span class="mom-neutral">—</span>`;
+  const cls   = diff > 0 ? 'mom-up' : 'mom-down';
+  const arrow = diff > 0 ? '↑' : '↓';
+  return `<span class="${cls}">${arrow} ${fmt(Math.abs(diff))} <small>(${Math.abs(pct).toFixed(0)}%)</small></span>`;
+}
+
 function renderMoM(data, month) {
   const el = document.getElementById('momCard');
   if (!el) return;
@@ -274,13 +278,6 @@ function renderMoM(data, month) {
   const totPrev = rows.reduce((s, r) => s + r.prev, 0);
   const totDiff = totCurr - totPrev;
   const totPct  = totPrev > 0 ? (totDiff / totPrev * 100) : 0;
-
-  function diffCell(diff, pct) {
-    if (diff === 0 && pct === 0) return `<span class="mom-neutral">—</span>`;
-    const cls   = diff > 0 ? 'mom-up' : 'mom-down';
-    const arrow = diff > 0 ? '↑' : '↓';
-    return `<span class="${cls}">${arrow} ${fmt(Math.abs(diff))} <small>(${Math.abs(pct).toFixed(0)}%)</small></span>`;
-  }
 
   el.innerHTML = `
     <div class="mom-header">
@@ -339,9 +336,7 @@ function renderBudgetLimitsForm() {
 function render() {
   const data = loadData();
   const md   = getMonthData(data, activeMonth);
-  const label = MONTH_LABELS[activeMonth];
 
-  document.querySelectorAll('.month-badge').forEach(el => el.textContent = label);
   document.getElementById('monthSelect').value = activeMonth;
 
   if (activeTab === 'dashboard') renderDashboard(data, md);
@@ -365,11 +360,10 @@ function renderDashboard(data, md) {
 
   // Category progress bars
   const prog = document.getElementById('categoryProgress');
-  prog.innerHTML = '';
-  CATEGORIES.forEach(c => {
+  prog.innerHTML = CATEGORIES.map(c => {
     const total = categoryTotal(md, c.key);
     const pct   = exp > 0 ? Math.min(100, total / exp * 100) : 0;
-    prog.innerHTML += `
+    return `
       <div class="progress-row">
         <div class="progress-label">
           <span class="dot" style="background:${c.color}"></span>
@@ -380,7 +374,7 @@ function renderDashboard(data, md) {
         </div>
         <span class="progress-amount">${fmt(total)}</span>
       </div>`;
-  });
+  }).join('');
 
   renderDonut(md, exp);
   renderTrend(data);
@@ -539,6 +533,18 @@ function updateIncomeFooter(md) {
 }
 
 // ── Expenses ──────────────────────────────────────────────────
+function budgetBarHtml(c, total) {
+  const limits = loadBudgetLimits();
+  const lim = limits[c.key];
+  if (!lim) return '';
+  const pct = Math.min(100, total / lim * 100);
+  const barColor = pct >= 90 ? '#f87171' : pct >= 70 ? '#f59e0b' : '#34d399';
+  return `<div class="cat-budget-bar">
+    <div class="cat-budget-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
+  </div>
+  <span class="cat-budget-label">${fmt(total)} / ${fmt(lim)} &bull; ${pct.toFixed(0)}% used</span>`;
+}
+
 function renderExpenses(md) {
   const container = document.getElementById('expenseCategories');
 
@@ -555,9 +561,7 @@ function renderExpenses(md) {
       </button>`;
   }).join('');
 
-  const grandTotal = CATEGORIES.reduce((s, cat) => {
-    return s + (md.expenses[cat.key] || []).reduce((ss, tx) => ss + (+tx.amount || 0), 0);
-  }, 0);
+  const grandTotal = totalExpenses(md);
 
   const c    = CATEGORIES.find(c => c.key === activeExpenseCategory);
   const rawTxs = md.expenses[c.key] || [];
@@ -586,17 +590,7 @@ function renderExpenses(md) {
         <div class="category-header-left">
           <span class="category-title">${c.label}</span>
           <span class="category-total">${fmt(total)} &mdash; ${txs.length} item${txs.length !== 1 ? 's' : ''}</span>
-          ${(() => {
-            const limits = loadBudgetLimits();
-            const lim = limits[c.key];
-            if (!lim) return '';
-            const pct = Math.min(100, total / lim * 100);
-            const barColor = pct >= 90 ? '#f87171' : pct >= 70 ? '#f59e0b' : '#34d399';
-            return `<div class="cat-budget-bar">
-              <div class="cat-budget-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
-            </div>
-            <span class="cat-budget-label">${fmt(total)} / ${fmt(lim)} &bull; ${pct.toFixed(0)}% used</span>`;
-          })()}
+          ${budgetBarHtml(c, total)}
         </div>
         <button class="btn-add-tx" data-cat="${c.key}">+ Add</button>
       </div>
@@ -606,9 +600,11 @@ function renderExpenses(md) {
 
 // ── Annual Summary ────────────────────────────────────────────
 function renderSummary(data) {
-  const incomeVals = MONTHS.map(m => totalIncome(getMonthData(data, m)));
-  const expVals    = MONTHS.map(m => totalExpenses(getMonthData(data, m)));
-  const netVals    = MONTHS.map((_, i) => incomeVals[i] - expVals[i]);
+  // Pre-cache each month's data to avoid redundant getMonthData calls in charts + table
+  const monthCache = MONTHS.map(m => getMonthData(data, m));
+  const incomeVals = monthCache.map(md => totalIncome(md));
+  const expVals    = monthCache.map(md => totalExpenses(md));
+  const netVals    = incomeVals.map((inc, i) => inc - expVals[i]);
 
   // Chart 1: Grouped bar (income vs expenses) + net line
   if (annualOverviewChart) { annualOverviewChart.destroy(); annualOverviewChart = null; }
@@ -651,7 +647,7 @@ function renderSummary(data) {
       labels: SHORT_LABELS,
       datasets: CATEGORIES.map(c => ({
         label: c.label,
-        data: MONTHS.map(m => categoryTotal(getMonthData(data, m), c.key)),
+        data: monthCache.map(md => categoryTotal(md, c.key)),
         borderColor: c.color,
         backgroundColor: c.color + '22',
         borderWidth: 2.5,
@@ -677,26 +673,26 @@ function renderSummary(data) {
   });
 
   // Table
-  const tbody   = document.getElementById('annualTableBody');
+  const tbody     = document.getElementById('annualTableBody');
   const incomeSum = incomeVals.reduce((s, v) => s + v, 0);
   const expSum    = expVals.reduce((s, v) => s + v, 0);
-  const netSum    = netVals.reduce((s, v) => s + v, 0);
-  tbody.innerHTML = '';
+  const netSum    = incomeSum - expSum;
 
-  tbody.innerHTML += `<tr class="row-income"><td>Income</td>${incomeVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(incomeSum)}</td></tr>`;
+  const tableRows = [`<tr class="row-income"><td>Income</td>${incomeVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(incomeSum)}</td></tr>`];
 
   CATEGORIES.forEach(c => {
-    const vals = MONTHS.map(m => categoryTotal(getMonthData(data, m), c.key));
+    const vals = monthCache.map(md => categoryTotal(md, c.key));
     const sum  = vals.reduce((s, v) => s + v, 0);
-    tbody.innerHTML += `<tr>
+    tableRows.push(`<tr>
       <td><span class="dot" style="background:${c.color};margin-right:6px"></span>${c.label}</td>
       ${vals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#334155">—</span>'}</td>`).join('')}
       <td>${sum > 0 ? fmt(sum) : '<span style="color:#334155">—</span>'}</td>
-    </tr>`;
+    </tr>`);
   });
 
-  tbody.innerHTML += `<tr class="row-total"><td>Total Expenses</td>${expVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(expSum)}</td></tr>`;
-  tbody.innerHTML += `<tr class="row-net"><td>Net Balance</td>${netVals.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${fmt(v)}</td>`).join('')}<td class="${netSum >= 0 ? 'positive' : 'negative'}">${fmt(netSum)}</td></tr>`;
+  tableRows.push(`<tr class="row-total"><td>Total Expenses</td>${expVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(expSum)}</td></tr>`);
+  tableRows.push(`<tr class="row-net"><td>Net Balance</td>${netVals.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${fmt(v)}</td>`).join('')}<td class="${netSum >= 0 ? 'positive' : 'negative'}">${fmt(netSum)}</td></tr>`);
+  tbody.innerHTML = tableRows.join('');
 
   renderMoM(data, activeMonth);
 }
@@ -765,68 +761,6 @@ function saveFund() {
 // ── Utilities ─────────────────────────────────────────────────
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Migration: add Food category ─────────────────────────────
-function migrateAddFood() {
-  const data = loadData();
-  if (!Object.keys(data).length) return;
-  const isFoodItem = p => /breakfast|lunch|dinner|bread|snacks|7\/11|food/i.test(p);
-  let changed = false;
-  Object.keys(data).forEach(month => {
-    const exp = data[month].expenses;
-    if (!exp) return;
-    if (!exp.food) { exp.food = []; }
-    ['needs', 'wants'].forEach(src => {
-      if (!exp[src]) return;
-      const keep = [], move = [];
-      exp[src].forEach(tx => (isFoodItem(tx.particular) ? move : keep).push(tx));
-      if (move.length) {
-        exp.food.push(...move);
-        exp[src] = keep;
-        changed = true;
-      }
-    });
-  });
-  if (changed) saveData(data);
-}
-
-// ── Migration: restore miscellaneous May data ─────────────────
-function migrateRestoreMisc() {
-  if (localStorage.getItem('_miscRestored')) return;
-  const data = loadData();
-  if (!data['2026-05']) return;
-  data['2026-05'].expenses.miscellaneous = [
-    { date: '2026-05-04', particular: 'Load (Sis)', amount: 53 },
-    { date: '2026-05-05', particular: 'Papa Odet Allowance', amount: 1000 },
-    { date: '2026-05-06', particular: 'John Allowance', amount: 800 },
-    { date: '2026-05-07', particular: 'Massage', amount: 860 },
-    { date: '2026-05-08', particular: 'John (VB)', amount: 1000 },
-    { date: '2026-05-08', particular: 'Trapo', amount: 500 },
-    { date: '2026-05-09', particular: "Mother's Day Gift", amount: 5000 },
-    { date: '2026-05-09', particular: 'Load (Sis)', amount: 89 },
-    { date: '2026-05-09', particular: 'John (Borrow)', amount: 1500 },
-    { date: '2026-05-10', particular: 'Ninang Gift for Harold (Ebeb)', amount: 1500 },
-    { date: '2026-05-10', particular: 'Church Offering', amount: 200 },
-    { date: '2026-05-11', particular: 'John Allowance', amount: 500 },
-    { date: '2026-05-12', particular: 'Kirsty Allowance', amount: 1500 },
-    { date: '2026-05-13', particular: 'John (Allowance)', amount: 200 },
-    { date: '2026-05-13', particular: 'John (Borrow)', amount: 1000 },
-    { date: '2026-05-14', particular: 'Massage', amount: 860 },
-    { date: '2026-05-15', particular: 'Misc/7-11', amount: 400 },
-    { date: '2026-05-16', particular: 'Personal Care (Nails)', amount: 700 },
-    { date: '2026-05-16', particular: 'John (Load)', amount: 89 }
-  ];
-  saveData(data);
-  localStorage.setItem('_miscRestored', '1');
-}
-
-// ── Migration: force-restore correct May 2026 data on all devices ─
-function migrateRestoreV3() {
-  if (localStorage.getItem('_restoredV3')) return;
-  const correct = {"2026-05":{"income":{"main15":0,"main30":0,"graphics15":0,"graphics30":0,"municipal15":12687,"municipal30":0,"additional":[{"name":"Additional Funds","amount":17500}]},"expenses":{"bills":[{"date":"2026-05-11","particular":"Car Maintenance","amount":17500},{"date":"2026-05-12","particular":"Gas","amount":2478},{"date":"2026-05-13","particular":"Claude Pro","amount":1378.74},{"date":"2026-05-13","particular":"Namecheap Domain Renewal","amount":1161.25}],"debts":[{"date":"2026-05-06","particular":"Egg","amount":560},{"date":"2026-05-12","particular":"Shopee Spaylater","amount":3302.47}],"needs":[{"date":"2026-05-04","particular":"Sack of Rice","amount":2700},{"date":"2026-05-04","particular":"Laundry","amount":750},{"date":"2026-05-06","particular":"Buttaine","amount":400},{"date":"2026-05-06","particular":"Zonrox/Downy","amount":600},{"date":"2026-05-09","particular":"Water Bottle","amount":220},{"date":"2026-05-11","particular":"Fare","amount":100},{"date":"2026-05-12","particular":"Others","amount":141},{"date":"2026-05-14","particular":"Laundry","amount":750},{"date":"2026-05-14","particular":"Groceries","amount":436.5}],"food":[{"date":"2026-05-04","particular":"Bread","amount":30},{"date":"2026-05-04","particular":"Midnight Snacks","amount":130},{"date":"2026-05-05","particular":"7/11","amount":618},{"date":"2026-05-06","particular":"Breakfast","amount":500},{"date":"2026-05-07","particular":"Lunch","amount":500},{"date":"2026-05-07","particular":"Snacks","amount":300},{"date":"2026-05-07","particular":"7/11 Store","amount":538},{"date":"2026-05-08","particular":"Dinner","amount":803},{"date":"2026-05-08","particular":"Snacks","amount":300},{"date":"2026-05-09","particular":"Breakfast","amount":253},{"date":"2026-05-09","particular":"Dinner","amount":500},{"date":"2026-05-10","particular":"Food (Mother's Day)","amount":1525},{"date":"2026-05-10","particular":"7/11 (Ice Cream)","amount":468},{"date":"2026-05-11","particular":"Lunch","amount":60},{"date":"2026-05-11","particular":"Dinner","amount":272},{"date":"2026-05-11","particular":"Snacks","amount":30},{"date":"2026-05-12","particular":"Lunch","amount":223},{"date":"2026-05-12","particular":"Dinner","amount":172},{"date":"2026-05-13","particular":"Breakfast","amount":70},{"date":"2026-05-13","particular":"Snacks","amount":250},{"date":"2026-05-14","particular":"Food","amount":444},{"date":"2026-05-15","particular":"Food","amount":191},{"date":"2026-05-15","particular":"Snacks","amount":110}],"wants":[{"date":"2026-05-04","particular":"Mixed Nuts","amount":200},{"date":"2026-05-06","particular":"Milktea","amount":328}],"miscellaneous":[{"date":"2026-05-04","particular":"Load (Sis)","amount":53},{"date":"2026-05-05","particular":"Papa Odet Allowance","amount":1000},{"date":"2026-05-06","particular":"John Allowance","amount":800},{"date":"2026-05-07","particular":"Massage","amount":860},{"date":"2026-05-08","particular":"John (VB)","amount":1000},{"date":"2026-05-08","particular":"Trapo","amount":500},{"date":"2026-05-09","particular":"Mother's Day Gift","amount":5000},{"date":"2026-05-09","particular":"Load (Sis)","amount":89},{"date":"2026-05-09","particular":"John (Borrow)","amount":1500},{"date":"2026-05-10","particular":"Ninang Gift for Harold (Ebeb)","amount":1500},{"date":"2026-05-10","particular":"Church Offering","amount":200},{"date":"2026-05-11","particular":"John Allowance","amount":500},{"date":"2026-05-12","particular":"Kirsty Allowance","amount":1500},{"date":"2026-05-13","particular":"John (Allowance)","amount":200},{"date":"2026-05-13","particular":"John (Borrow)","amount":1000},{"date":"2026-05-14","particular":"Massage","amount":860},{"date":"2026-05-15","particular":"Misc/7-11","amount":400},{"date":"2026-05-16","particular":"Personal Care (Nails)","amount":700},{"date":"2026-05-16","particular":"John (Load)","amount":89}],"unexpected":[{"date":"2026-05-07","particular":"Volleyball","amount":400},{"date":"2026-05-08","particular":"Beauty Care","amount":4000},{"date":"2026-05-11","particular":"Papa Odet's Check-up","amount":2400},{"date":"2026-05-11","particular":"VB For Fun","amount":1000}]}}};
-  saveData(correct);
-  localStorage.setItem('_restoredV3', '1');
 }
 
 // ── Seed Data ─────────────────────────────────────────────────
@@ -959,9 +893,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();
   const fromSupabase = await initData();
   if (!fromSupabase) {
-    migrateAddFood();
-    migrateRestoreMisc();
-    migrateRestoreV3();
     seedData();
     // Push whatever local data we have up to Supabase
     if (Object.keys(cachedData).length) syncToSupabase(cachedData);
