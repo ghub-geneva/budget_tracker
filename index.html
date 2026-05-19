@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -47,6 +47,16 @@
         </div>
       </div>
     </div>
+
+    <!-- Year Picker -->
+    <div class="year-picker">
+      <button class="year-btn active" data-year="2026">2026</button>
+      <button class="year-btn" data-year="2027">2027</button>
+      <button class="year-btn" data-year="2028">2028</button>
+      <button class="year-btn" data-year="2029">2029</button>
+      <button class="year-btn" data-year="2030">2030</button>
+    </div>
+
     <nav class="sidebar-nav">
       <div class="nav-main">
         <button class="nav-item active" data-tab="dashboard">
@@ -80,6 +90,15 @@
     <!-- Top Bar -->
     <div class="topbar">
       <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      <div class="topbar-year">
+        <select id="yearSelect">
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+          <option value="2029">2029</option>
+          <option value="2030">2030</option>
+        </select>
+      </div>
       <div class="topbar-month">
         <label for="monthSelect">Active Month</label>
         <select id="monthSelect">
@@ -695,6 +714,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

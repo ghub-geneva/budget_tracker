@@ -1,13 +1,24 @@
 'use strict';
 
-const MONTHS = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
-const MONTH_LABELS = {
-  '2026-01': 'January 2026', '2026-02': 'February 2026', '2026-03': 'March 2026',
-  '2026-04': 'April 2026',   '2026-05': 'May 2026',      '2026-06': 'June 2026',
-  '2026-07': 'July 2026',    '2026-08': 'August 2026',   '2026-09': 'September 2026',
-  '2026-10': 'October 2026', '2026-11': 'November 2026', '2026-12': 'December 2026'
-};
-const SHORT_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_NAMES_LIST = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SHORT_LABELS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const YEARS            = [2026, 2027, 2028, 2029, 2030];
+
+let activeYear = 2026;
+
+function buildMonths(year) {
+  return Array.from({length: 12}, (_, i) => `${year}-${String(i+1).padStart(2,'0')}`);
+}
+function buildMonthLabels(year) {
+  const labels = {};
+  MONTH_NAMES_LIST.forEach((name, i) => {
+    labels[`${year}-${String(i+1).padStart(2,'0')}`] = `${name} ${year}`;
+  });
+  return labels;
+}
+
+let MONTHS       = buildMonths(activeYear);
+let MONTH_LABELS = buildMonthLabels(activeYear);
 
 const CATEGORIES = [
   { key: 'bills',         label: 'Bills',              color: '#6366f1' },
@@ -117,6 +128,37 @@ function showToast(msg) {
   el.textContent = msg;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ── Year Switcher ─────────────────────────────────────────────
+function switchYear(year) {
+  activeYear   = year;
+  MONTHS       = buildMonths(year);
+  MONTH_LABELS = buildMonthLabels(year);
+
+  // Keep same month number (01–12) in the new year
+  const monthNum = activeMonth.split('-')[1];
+  activeMonth    = `${year}-${monthNum}`;
+
+  // Repopulate the month dropdown
+  const sel = document.getElementById('monthSelect');
+  sel.innerHTML = MONTHS.map(m => `<option value="${m}">${MONTH_LABELS[m]}</option>`).join('');
+  sel.value = activeMonth;
+
+  // Sync mobile year select (topbar)
+  const yearSel = document.getElementById('yearSelect');
+  if (yearSel) yearSel.value = year;
+
+  // Update sidebar logo year text
+  const logoYear = document.querySelector('.logo .year');
+  if (logoYear) logoYear.textContent = year;
+
+  // Update year-btn active states
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.classList.toggle('active', +btn.dataset.year === year);
+  });
+
+  render();
 }
 
 // ── Render ────────────────────────────────────────────────────
@@ -755,6 +797,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     activeMonth = e.target.value;
     render();
   });
+
+  // Year picker — sidebar buttons
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchYear(+btn.dataset.year));
+  });
+
+  // Year picker — mobile topbar select
+  const yearSelectEl = document.getElementById('yearSelect');
+  if (yearSelectEl) yearSelectEl.addEventListener('change', e => switchYear(+e.target.value));
 
   // Income live total
   ['main15','main30','graphics15','graphics30','municipal15','municipal30'].forEach(id => {

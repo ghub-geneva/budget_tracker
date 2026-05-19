@@ -71,6 +71,40 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* ── Year Picker (sidebar) ── */
+.year-picker {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.year-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 2px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.year-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-secondary);
+}
+
+.year-btn.active {
+  background: var(--primary-light);
+  border-color: rgba(129,140,248,0.4);
+  color: var(--primary);
+}
+
 .sidebar-nav {
   padding: 10px 10px;
   flex: 1;
@@ -174,6 +208,26 @@ body {
 
 .topbar-month select:focus { border-color: var(--primary); }
 .topbar-month select option { background: #1a2332; color: var(--text); }
+
+/* ── Topbar Year Select (mobile only — hidden on desktop) ── */
+.topbar-year { display: none; }
+
+.topbar-year select {
+  padding: 6px 26px 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--primary-light);
+  background: #1a2332;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236366f1' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  letter-spacing: 0.03em;
+}
 
 /* ── Main ── */
 .main {
@@ -1456,11 +1510,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     padding-bottom: calc(68px + env(safe-area-inset-bottom));
   }
 
+  /* Hide sidebar year picker on mobile (sidebar becomes bottom nav) */
+  .year-picker { display: none; }
+
   /* Topbar: tighter on mobile */
   .topbar { padding: 0 14px; height: 52px; }
   .topbar-title { font-size: 15px; }
   .topbar-month label { display: none; }
   .topbar-month select { font-size: 12px; padding: 6px 28px 6px 10px; }
+
+  /* Show year select in topbar on mobile */
+  .topbar-year { display: flex; align-items: center; }
 
   /* Content padding */
   .tab-content { padding: 14px 14px; }
