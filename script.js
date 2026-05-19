@@ -353,7 +353,6 @@ function render() {
 // ── Dashboard ─────────────────────────────────────────────────
 function renderDashboard(data, md) {
   renderInsights(data, md, activeMonth);
-  renderMoM(data, activeMonth);
   const inc  = totalIncome(md);
   const exp  = totalExpenses(md);
   const net  = inc - exp;
@@ -698,6 +697,8 @@ function renderSummary(data) {
 
   tbody.innerHTML += `<tr class="row-total"><td>Total Expenses</td>${expVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(expSum)}</td></tr>`;
   tbody.innerHTML += `<tr class="row-net"><td>Net Balance</td>${netVals.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${fmt(v)}</td>`).join('')}<td class="${netSum >= 0 ? 'positive' : 'negative'}">${fmt(netSum)}</td></tr>`;
+
+  renderMoM(data, activeMonth);
 }
 
 // ── Modals ────────────────────────────────────────────────────

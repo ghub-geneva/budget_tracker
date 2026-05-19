@@ -1518,6 +1518,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 /* ── Month-over-Month Table ── */
 .mom-card {
+  margin-top: 20px;
   margin-bottom: 16px;
   padding: 0;
   overflow: hidden;

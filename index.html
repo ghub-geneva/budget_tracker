@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -127,8 +127,6 @@
       <div id="insightsCard" class="insights-card"></div>
 
       <!-- Month-over-Month -->
-      <div id="momCard" class="card mom-card"></div>
-
       <div class="summary-cards">
         <div class="card card-income">
           <div class="card-icon income-icon">
@@ -257,6 +255,8 @@
 
     <!-- Annual Summary Tab -->
     <section id="tab-summary" class="tab-content">
+
+      <div id="momCard" class="card mom-card"></div>
 
       <div class="summary-charts-row">
         <div class="chart-box">
@@ -740,6 +740,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="script.js?v=11"></script>
+  <script src="script.js?v=12"></script>
 </body>
 </html>
