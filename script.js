@@ -153,10 +153,9 @@ function switchYear(year) {
   const logoYear = document.querySelector('.logo .year');
   if (logoYear) logoYear.textContent = year;
 
-  // Update year-btn active states
-  document.querySelectorAll('.year-btn').forEach(btn => {
-    btn.classList.toggle('active', +btn.dataset.year === year);
-  });
+  // Sync sidebar year dropdown
+  const sidebarYearSel = document.getElementById('sidebarYearSelect');
+  if (sidebarYearSel) sidebarYearSel.value = year;
 
   // Navigate to Annual Summary
   activeTab = 'summary';
@@ -804,10 +803,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     render();
   });
 
-  // Year picker — sidebar buttons
-  document.querySelectorAll('.year-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchYear(+btn.dataset.year));
-  });
+  // Year picker — sidebar dropdown
+  const sidebarYearEl = document.getElementById('sidebarYearSelect');
+  if (sidebarYearEl) sidebarYearEl.addEventListener('change', e => switchYear(+e.target.value));
 
   // Year picker — mobile topbar select
   const yearSelectEl = document.getElementById('yearSelect');

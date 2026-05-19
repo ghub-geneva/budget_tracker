@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -50,11 +50,14 @@
 
     <!-- Year Picker -->
     <div class="year-picker">
-      <button class="year-btn active" data-year="2026">2026</button>
-      <button class="year-btn" data-year="2027">2027</button>
-      <button class="year-btn" data-year="2028">2028</button>
-      <button class="year-btn" data-year="2029">2029</button>
-      <button class="year-btn" data-year="2030">2030</button>
+      <label class="year-picker-label">Year</label>
+      <select id="sidebarYearSelect" class="year-select">
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+      </select>
     </div>
 
     <nav class="sidebar-nav">
@@ -714,6 +717,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="script.js?v=9"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>
