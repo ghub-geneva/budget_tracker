@@ -166,6 +166,175 @@ function switchYear(year) {
   render();
 }
 
+// ── Insights & MoM helpers ────────────────────────────────────
+function getPrevMonth(month) {
+  const [y, m] = month.split('-').map(Number);
+  if (m === 1) return `${y-1}-12`;
+  return `${y}-${String(m-1).padStart(2,'0')}`;
+}
+
+function loadBudgetLimits() {
+  try { return JSON.parse(localStorage.getItem('budgetLimits') || '{}'); }
+  catch { return {}; }
+}
+
+function saveBudgetLimits(limits) {
+  localStorage.setItem('budgetLimits', JSON.stringify(limits));
+}
+
+function renderInsights(data, md, month) {
+  const el = document.getElementById('insightsCard');
+  if (!el) return;
+  const prevM = getPrevMonth(month);
+  const pm    = getMonthData(data, prevM);
+  const inc   = totalIncome(md);
+  const exp   = totalExpenses(md);
+  const net   = inc - exp;
+
+  // Biggest expense category
+  let bigCat = null, bigAmt = 0;
+  CATEGORIES.forEach(c => {
+    const t = categoryTotal(md, c.key);
+    if (t > bigAmt) { bigAmt = t; bigCat = c; }
+  });
+
+  // Biggest MoM change by %
+  let changeCat = null, changePct = 0, changeAbs = 0;
+  CATEGORIES.forEach(c => {
+    const curr = categoryTotal(md, c.key);
+    const prev = categoryTotal(pm, c.key);
+    if (prev > 0) {
+      const pct = (curr - prev) / prev * 100;
+      if (Math.abs(pct) > Math.abs(changePct)) {
+        changePct = pct; changeAbs = curr - prev; changeCat = c;
+      }
+    }
+  });
+
+  // Income utilization
+  const util = inc > 0 ? (exp / inc * 100).toFixed(1) : null;
+
+  const items = [];
+
+  if (net >= 0) {
+    items.push({ icon: '✅', text: `Net balance is <strong>${fmt(net)}</strong> — you're in the green this month!` });
+  } else {
+    items.push({ icon: '⚠️', text: `Net balance is <strong>${fmt(net)}</strong> — expenses exceed income.` });
+  }
+
+  if (bigCat && bigAmt > 0) {
+    items.push({ icon: '📊', text: `Biggest expense: <strong>${bigCat.label}</strong> at ${fmt(bigAmt)}` });
+  }
+
+  if (changeCat) {
+    const dir   = changePct >= 0 ? 'up' : 'down';
+    const arrow = changePct >= 0 ? '↑' : '↓';
+    items.push({ icon: changePct >= 0 ? '📈' : '📉', text: `<strong>${changeCat.label}</strong> is ${dir} <strong>${Math.abs(changePct).toFixed(0)}%</strong> ${arrow} vs last month` });
+  } else {
+    items.push({ icon: '📅', text: 'No previous month data to compare yet.' });
+  }
+
+  if (util !== null) {
+    const utilColor = +util > 90 ? 'util-danger' : +util > 70 ? 'util-warn' : 'util-ok';
+    items.push({ icon: '💰', text: `You've used <strong class="${utilColor}">${util}%</strong> of your income this month` });
+  }
+
+  el.innerHTML = `
+    <div class="insights-header">
+      <span class="insights-title">Monthly Insights</span>
+      <span class="insights-month">${MONTH_LABELS[month] || month}</span>
+    </div>
+    <div class="insights-grid">
+      ${items.map(item => `
+        <div class="insight-item">
+          <span class="insight-icon">${item.icon}</span>
+          <span class="insight-text">${item.text}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderMoM(data, month) {
+  const el = document.getElementById('momCard');
+  if (!el) return;
+  const prevM     = getPrevMonth(month);
+  const md        = getMonthData(data, month);
+  const pm        = getMonthData(data, prevM);
+  const prevLabel = MONTH_LABELS[prevM] ? MONTH_LABELS[prevM].split(' ')[0] : '—';
+  const currLabel = MONTH_LABELS[month] ? MONTH_LABELS[month].split(' ')[0] : '—';
+
+  const rows = CATEGORIES.map(c => {
+    const curr = categoryTotal(md, c.key);
+    const prev = categoryTotal(pm, c.key);
+    const diff = curr - prev;
+    const pct  = prev > 0 ? (diff / prev * 100) : (curr > 0 ? 100 : 0);
+    return { c, curr, prev, diff, pct };
+  });
+
+  const totCurr = rows.reduce((s, r) => s + r.curr, 0);
+  const totPrev = rows.reduce((s, r) => s + r.prev, 0);
+  const totDiff = totCurr - totPrev;
+  const totPct  = totPrev > 0 ? (totDiff / totPrev * 100) : 0;
+
+  function diffCell(diff, pct) {
+    if (diff === 0 && pct === 0) return `<span class="mom-neutral">—</span>`;
+    const cls   = diff > 0 ? 'mom-up' : 'mom-down';
+    const arrow = diff > 0 ? '↑' : '↓';
+    return `<span class="${cls}">${arrow} ${fmt(Math.abs(diff))} <small>(${Math.abs(pct).toFixed(0)}%)</small></span>`;
+  }
+
+  el.innerHTML = `
+    <div class="mom-header">
+      <h3>Month-over-Month</h3>
+      <span class="mom-subtitle">Comparing to ${MONTH_LABELS[prevM] || prevM}</span>
+    </div>
+    <div class="table-wrap">
+      <table class="mom-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>${prevLabel}</th>
+            <th>${currLabel}</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td><span class="dot" style="background:${r.c.color};width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0"></span>${r.c.label}</td>
+              <td class="mom-amt">${r.prev > 0 ? fmt(r.prev) : '<span class="mom-neutral">—</span>'}</td>
+              <td class="mom-amt">${r.curr > 0 ? fmt(r.curr) : '<span class="mom-neutral">—</span>'}</td>
+              <td>${diffCell(r.diff, r.pct)}</td>
+            </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr class="mom-total-row">
+            <td><strong>Total</strong></td>
+            <td class="mom-amt"><strong>${fmt(totPrev)}</strong></td>
+            <td class="mom-amt"><strong>${fmt(totCurr)}</strong></td>
+            <td>${diffCell(totDiff, totPct)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
+}
+
+function renderBudgetLimitsForm() {
+  const form = document.getElementById('budgetLimitsForm');
+  if (!form) return;
+  const limits = loadBudgetLimits();
+  form.innerHTML = CATEGORIES.map(c => `
+    <div class="budget-limit-row">
+      <label class="budget-limit-label-cat">
+        <span class="dot" style="background:${c.color};width:8px;height:8px;border-radius:50%;display:inline-block"></span>
+        ${c.label}
+      </label>
+      <div class="budget-limit-input-wrap">
+        <span class="budget-limit-currency">₱</span>
+        <input type="number" class="budget-limit-input" id="limit-${c.key}" value="${limits[c.key] || ''}" placeholder="No limit" min="0" step="100">
+      </div>
+    </div>`).join('');
+}
+
 // ── Render ────────────────────────────────────────────────────
 function render() {
   const data = loadData();
@@ -183,6 +352,8 @@ function render() {
 
 // ── Dashboard ─────────────────────────────────────────────────
 function renderDashboard(data, md) {
+  renderInsights(data, md, activeMonth);
+  renderMoM(data, activeMonth);
   const inc  = totalIncome(md);
   const exp  = totalExpenses(md);
   const net  = inc - exp;
@@ -416,6 +587,17 @@ function renderExpenses(md) {
         <div class="category-header-left">
           <span class="category-title">${c.label}</span>
           <span class="category-total">${fmt(total)} &mdash; ${txs.length} item${txs.length !== 1 ? 's' : ''}</span>
+          ${(() => {
+            const limits = loadBudgetLimits();
+            const lim = limits[c.key];
+            if (!lim) return '';
+            const pct = Math.min(100, total / lim * 100);
+            const barColor = pct >= 90 ? '#f87171' : pct >= 70 ? '#f59e0b' : '#34d399';
+            return `<div class="cat-budget-bar">
+              <div class="cat-budget-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
+            </div>
+            <span class="cat-budget-label">${fmt(total)} / ${fmt(lim)} &bull; ${pct.toFixed(0)}% used</span>`;
+          })()}
         </div>
         <button class="btn-add-tx" data-cat="${c.key}">+ Add</button>
       </div>
@@ -886,7 +1068,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('active', b === btn));
       document.querySelectorAll('.admin-panel').forEach(p => p.classList.toggle('active', p.id === `admin-${btn.dataset.admin}`));
+      if (btn.dataset.admin === 'budget') renderBudgetLimitsForm();
     });
+  });
+
+  // Save budget limits
+  document.getElementById('saveLimitsBtn')?.addEventListener('click', () => {
+    const limits = {};
+    CATEGORIES.forEach(c => {
+      const val = parseFloat(document.getElementById(`limit-${c.key}`)?.value);
+      if (!isNaN(val) && val > 0) limits[c.key] = val;
+    });
+    saveBudgetLimits(limits);
+    showToast('Budget limits saved!');
+    render();
   });
 
   // Keyboard: Escape closes modals

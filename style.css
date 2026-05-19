@@ -1453,6 +1453,240 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .progress-row { grid-template-columns: 140px 1fr 110px; }
 }
 
+/* ── Insights Card ── */
+.insights-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.insights-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+.insights-month {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.insight-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.insight-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.insight-text strong { color: var(--text); }
+.util-ok     { color: #34d399; }
+.util-warn   { color: #f59e0b; }
+.util-danger { color: #f87171; }
+
+/* ── Month-over-Month Table ── */
+.mom-card {
+  margin-bottom: 16px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mom-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mom-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mom-table thead th {
+  padding: 9px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+}
+
+.mom-table tbody tr {
+  border-bottom: 1px solid rgba(30,41,59,0.6);
+  transition: background 0.1s;
+}
+
+.mom-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.mom-table tbody tr:last-child { border-bottom: none; }
+
+.mom-table td {
+  padding: 9px 16px;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.mom-table td:first-child { color: var(--text); display: flex; align-items: center; }
+
+.mom-amt { text-align: right; font-variant-numeric: tabular-nums; }
+
+.mom-up      { color: #f87171; font-weight: 600; }
+.mom-down    { color: #34d399; font-weight: 600; }
+.mom-neutral { color: var(--muted); }
+
+.mom-table tfoot .mom-total-row td {
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.03);
+  border-top: 1px solid var(--border);
+  color: var(--text);
+}
+
+.mom-table tfoot .mom-total-row td:first-child { display: table-cell; }
+
+/* ── Budget Limit Bar (Expenses category) ── */
+.cat-budget-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.cat-budget-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.cat-budget-label {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ── Budget Limits Admin Form ── */
+.admin-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.budget-limits-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.budget-limit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.budget-limit-label-cat {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.budget-limit-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #1a2332;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0 10px;
+}
+
+.budget-limit-currency {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.budget-limit-input {
+  width: 110px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 13px;
+  padding: 7px 4px;
+}
+
+.save-limits-btn {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(129,140,248,0.35);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.save-limits-btn:hover { background: rgba(99,102,241,0.25); }
+
 /* ── Mobile (≤ 640px) ── */
 @media (max-width: 640px) {
   /* Sidebar becomes a fixed bottom nav bar */
@@ -1648,4 +1882,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   /* Modal: full width with no padding overflow */
   .modal-overlay { padding: 12px; align-items: flex-end; }
   .modal { border-radius: 14px 14px 12px 12px; }
+
+  .insights-grid { grid-template-columns: 1fr; }
+  .mom-table { font-size: 11.5px; }
+  .mom-table td, .mom-table th { padding: 8px 10px; }
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -123,6 +123,12 @@
 
     <!-- Dashboard Tab -->
     <section id="tab-dashboard" class="tab-content active">
+      <!-- Insights -->
+      <div id="insightsCard" class="insights-card"></div>
+
+      <!-- Month-over-Month -->
+      <div id="momCard" class="card mom-card"></div>
+
       <div class="summary-cards">
         <div class="card card-income">
           <div class="card-icon income-icon">
@@ -294,6 +300,10 @@
         <button class="admin-tab" data-admin="workflow">
           <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M2 3h4v4H2V3zm0 5h4v4H2V8zm5-5h4v4H7V3zm0 5h4v4H7V8z"/></svg>
           Workflow
+        </button>
+        <button class="admin-tab" data-admin="budget">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M1 7h13M1 7l4-4M1 7l4 4M14 7l-4-4M14 7l-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          Budget Limits
         </button>
       </div>
 
@@ -659,6 +669,19 @@
         </div>
       </div>
 
+      <!-- Budget Limits -->
+      <div class="admin-panel" id="admin-budget">
+        <div class="admin-section-header">
+          <h3>Budget Limits</h3>
+          <span class="admin-badge">per category</span>
+        </div>
+        <p class="admin-desc">Set a monthly spending cap per category. A progress bar will appear in Expenses when a limit is set.</p>
+        <div class="budget-limits-form" id="budgetLimitsForm">
+          <!-- populated by JS -->
+        </div>
+        <button class="save-limits-btn" id="saveLimitsBtn">Save Limits</button>
+      </div>
+
     </section>
 
   </main>
@@ -717,6 +740,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>
