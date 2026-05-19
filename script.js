@@ -29,14 +29,46 @@ let annualOverviewChart   = null;
 let annualStackedChart    = null;
 let dailyExpenseChart     = null;
 
+// ── Supabase ──────────────────────────────────────────────────
+const SB_URL  = 'https://hdnyavpcnlohuidxddpv.supabase.co';
+const SB_KEY  = 'sb_publishable_Ze46S6BZ4_ndxMGs63BAag_hK3787C0';
+const sb      = window.supabase.createClient(SB_URL, SB_KEY);
+
 // ── Storage ──────────────────────────────────────────────────
-function loadData() {
-  try { return JSON.parse(localStorage.getItem('budgetTracker2026') || '{}'); }
-  catch { return {}; }
-}
+let cachedData = {};
+
+function loadData() { return cachedData; }
 
 function saveData(data) {
+  cachedData = data;
   localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+  syncToSupabase(data);
+}
+
+async function syncToSupabase(allData) {
+  const rows = Object.entries(allData).map(([month, data]) => ({
+    month, data, updated_at: new Date().toISOString()
+  }));
+  if (!rows.length) return;
+  const { error } = await sb.from('budget_months').upsert(rows, { onConflict: 'month' });
+  if (error) console.warn('Supabase sync error:', error.message);
+}
+
+async function initData() {
+  try {
+    const { data: rows, error } = await sb.from('budget_months').select('month, data');
+    if (!error && rows && rows.length > 0) {
+      rows.forEach(r => { cachedData[r.month] = r.data; });
+      localStorage.setItem('budgetTracker2026', JSON.stringify(cachedData));
+      // Mark all local migrations as done — Supabase is the source of truth
+      ['_foodMigrated','_miscRestored','_restoredV3'].forEach(k => localStorage.setItem(k, '1'));
+      return true; // loaded from Supabase
+    }
+  } catch (e) { console.warn('Supabase unavailable, using local cache:', e.message); }
+  // Fallback: localStorage cache
+  try { cachedData = JSON.parse(localStorage.getItem('budgetTracker2026') || '{}'); }
+  catch { cachedData = {}; }
+  return false;
 }
 
 function getMonthData(data, month) {
@@ -507,9 +539,8 @@ function escHtml(s) {
 
 // ── Migration: add Food category ─────────────────────────────
 function migrateAddFood() {
-  const raw = localStorage.getItem('budgetTracker2026');
-  if (!raw) return;
-  const data = JSON.parse(raw);
+  const data = loadData();
+  if (!Object.keys(data).length) return;
   const isFoodItem = p => /breakfast|lunch|dinner|bread|snacks|7\/11|food/i.test(p);
   let changed = false;
   Object.keys(data).forEach(month => {
@@ -527,15 +558,13 @@ function migrateAddFood() {
       }
     });
   });
-  if (changed) localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+  if (changed) saveData(data);
 }
 
 // ── Migration: restore miscellaneous May data ─────────────────
 function migrateRestoreMisc() {
   if (localStorage.getItem('_miscRestored')) return;
-  const raw = localStorage.getItem('budgetTracker2026');
-  if (!raw) return;
-  const data = JSON.parse(raw);
+  const data = loadData();
   if (!data['2026-05']) return;
   data['2026-05'].expenses.miscellaneous = [
     { date: '2026-05-04', particular: 'Load (Sis)', amount: 53 },
@@ -558,7 +587,7 @@ function migrateRestoreMisc() {
     { date: '2026-05-16', particular: 'Personal Care (Nails)', amount: 700 },
     { date: '2026-05-16', particular: 'John (Load)', amount: 89 }
   ];
-  localStorage.setItem('budgetTracker2026', JSON.stringify(data));
+  saveData(data);
   localStorage.setItem('_miscRestored', '1');
 }
 
@@ -566,14 +595,13 @@ function migrateRestoreMisc() {
 function migrateRestoreV3() {
   if (localStorage.getItem('_restoredV3')) return;
   const correct = {"2026-05":{"income":{"main15":0,"main30":0,"graphics15":0,"graphics30":0,"municipal15":12687,"municipal30":0,"additional":[{"name":"Additional Funds","amount":17500}]},"expenses":{"bills":[{"date":"2026-05-11","particular":"Car Maintenance","amount":17500},{"date":"2026-05-12","particular":"Gas","amount":2478},{"date":"2026-05-13","particular":"Claude Pro","amount":1378.74},{"date":"2026-05-13","particular":"Namecheap Domain Renewal","amount":1161.25}],"debts":[{"date":"2026-05-06","particular":"Egg","amount":560},{"date":"2026-05-12","particular":"Shopee Spaylater","amount":3302.47}],"needs":[{"date":"2026-05-04","particular":"Sack of Rice","amount":2700},{"date":"2026-05-04","particular":"Laundry","amount":750},{"date":"2026-05-06","particular":"Buttaine","amount":400},{"date":"2026-05-06","particular":"Zonrox/Downy","amount":600},{"date":"2026-05-09","particular":"Water Bottle","amount":220},{"date":"2026-05-11","particular":"Fare","amount":100},{"date":"2026-05-12","particular":"Others","amount":141},{"date":"2026-05-14","particular":"Laundry","amount":750},{"date":"2026-05-14","particular":"Groceries","amount":436.5}],"food":[{"date":"2026-05-04","particular":"Bread","amount":30},{"date":"2026-05-04","particular":"Midnight Snacks","amount":130},{"date":"2026-05-05","particular":"7/11","amount":618},{"date":"2026-05-06","particular":"Breakfast","amount":500},{"date":"2026-05-07","particular":"Lunch","amount":500},{"date":"2026-05-07","particular":"Snacks","amount":300},{"date":"2026-05-07","particular":"7/11 Store","amount":538},{"date":"2026-05-08","particular":"Dinner","amount":803},{"date":"2026-05-08","particular":"Snacks","amount":300},{"date":"2026-05-09","particular":"Breakfast","amount":253},{"date":"2026-05-09","particular":"Dinner","amount":500},{"date":"2026-05-10","particular":"Food (Mother's Day)","amount":1525},{"date":"2026-05-10","particular":"7/11 (Ice Cream)","amount":468},{"date":"2026-05-11","particular":"Lunch","amount":60},{"date":"2026-05-11","particular":"Dinner","amount":272},{"date":"2026-05-11","particular":"Snacks","amount":30},{"date":"2026-05-12","particular":"Lunch","amount":223},{"date":"2026-05-12","particular":"Dinner","amount":172},{"date":"2026-05-13","particular":"Breakfast","amount":70},{"date":"2026-05-13","particular":"Snacks","amount":250},{"date":"2026-05-14","particular":"Food","amount":444},{"date":"2026-05-15","particular":"Food","amount":191},{"date":"2026-05-15","particular":"Snacks","amount":110}],"wants":[{"date":"2026-05-04","particular":"Mixed Nuts","amount":200},{"date":"2026-05-06","particular":"Milktea","amount":328}],"miscellaneous":[{"date":"2026-05-04","particular":"Load (Sis)","amount":53},{"date":"2026-05-05","particular":"Papa Odet Allowance","amount":1000},{"date":"2026-05-06","particular":"John Allowance","amount":800},{"date":"2026-05-07","particular":"Massage","amount":860},{"date":"2026-05-08","particular":"John (VB)","amount":1000},{"date":"2026-05-08","particular":"Trapo","amount":500},{"date":"2026-05-09","particular":"Mother's Day Gift","amount":5000},{"date":"2026-05-09","particular":"Load (Sis)","amount":89},{"date":"2026-05-09","particular":"John (Borrow)","amount":1500},{"date":"2026-05-10","particular":"Ninang Gift for Harold (Ebeb)","amount":1500},{"date":"2026-05-10","particular":"Church Offering","amount":200},{"date":"2026-05-11","particular":"John Allowance","amount":500},{"date":"2026-05-12","particular":"Kirsty Allowance","amount":1500},{"date":"2026-05-13","particular":"John (Allowance)","amount":200},{"date":"2026-05-13","particular":"John (Borrow)","amount":1000},{"date":"2026-05-14","particular":"Massage","amount":860},{"date":"2026-05-15","particular":"Misc/7-11","amount":400},{"date":"2026-05-16","particular":"Personal Care (Nails)","amount":700},{"date":"2026-05-16","particular":"John (Load)","amount":89}],"unexpected":[{"date":"2026-05-07","particular":"Volleyball","amount":400},{"date":"2026-05-08","particular":"Beauty Care","amount":4000},{"date":"2026-05-11","particular":"Papa Odet's Check-up","amount":2400},{"date":"2026-05-11","particular":"VB For Fun","amount":1000}]}}};
-  localStorage.setItem('budgetTracker2026', JSON.stringify(correct));
+  saveData(correct);
   localStorage.setItem('_restoredV3', '1');
 }
 
 // ── Seed Data ─────────────────────────────────────────────────
 function seedData() {
-  const existing = localStorage.getItem('budgetTracker2026');
-  if (existing && existing !== '{}') return;
+  if (Object.keys(cachedData).length) return;
   const seed = {
     '2026-05': {
       income: {
@@ -662,15 +690,20 @@ function seedData() {
       }
     }
   };
-  localStorage.setItem('budgetTracker2026', JSON.stringify(seed));
+  saveData(seed);
 }
 
 // ── Init ──────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  migrateAddFood();
-  migrateRestoreMisc();
-  migrateRestoreV3();
-  seedData();
+document.addEventListener('DOMContentLoaded', async () => {
+  const fromSupabase = await initData();
+  if (!fromSupabase) {
+    migrateAddFood();
+    migrateRestoreMisc();
+    migrateRestoreV3();
+    seedData();
+    // Push whatever local data we have up to Supabase
+    if (Object.keys(cachedData).length) syncToSupabase(cachedData);
+  }
 
   const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary', admin: 'Admin' };
 
