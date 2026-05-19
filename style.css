@@ -1512,27 +1512,52 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .cat-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    gap: 6px;
   }
   .cat-tabs::-webkit-scrollbar { display: none; }
-  .cat-tab { flex-shrink: 0; padding: 9px 12px; }
-  .cat-tab-label { font-size: 12px; }
-  .cat-tab-total { font-size: 11px; }
+  .cat-tab {
+    flex-shrink: 0;
+    padding: 8px 10px;
+    gap: 6px;
+    border-radius: 8px;
+  }
+  .cat-tab-dot { width: 7px; height: 7px; }
+  .cat-tab-label { font-size: 11.5px; }
+  .cat-tab-total { font-size: 10.5px; }
 
-  /* Category section touch targets */
-  .btn-add-tx { padding: 8px 14px; font-size: 13px; }
-  .btn-icon { padding: 6px 8px; font-size: 15px; }
+  /* Category section header */
+  .category-header { padding: 12px 14px; }
+  .category-title { font-size: 13px; }
+  .category-total { font-size: 11px; }
+
+  /* Touch targets — minimum 44px */
+  .btn-add-tx {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+  .btn-icon {
+    padding: 8px 10px;
+    font-size: 16px;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   /* Transaction rows */
   .tx-item {
-    grid-template-columns: 68px 1fr 86px 32px;
+    grid-template-columns: 62px 1fr 82px 36px;
     gap: 6px;
     font-size: 12px;
-    padding: 10px 0;
+    padding: 11px 0;
   }
   .tx-date { font-size: 11px; }
+  .tx-amount { font-size: 12px; }
   .tx-list { padding: 0 14px; }
 
   /* Income grid */
