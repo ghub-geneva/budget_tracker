@@ -279,10 +279,95 @@
       <div class="admin-panel active" id="admin-changelog">
         <div class="admin-section-header">
           <h3>Changelog</h3>
-          <span class="admin-badge">4 releases</span>
+          <span class="admin-badge">9 releases</span>
         </div>
 
         <div class="changelog-list">
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.4.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Password Login Screen</h4>
+            <ul>
+              <li>Added password-protected login screen before accessing the app</li>
+              <li>Title "Geneva Budget Tracker" displayed on login page</li>
+              <li>Password required every time the browser is closed and reopened (sessionStorage)</li>
+              <li>Polished dark UI with ambient glow, glass-morphism card, and entrance animation</li>
+              <li>Wrong password shows inline error; Enter key supported</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.3.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Supabase Cloud Sync</h4>
+            <ul>
+              <li>Integrated Supabase as cloud database — data now syncs across all devices</li>
+              <li>Data loads from Supabase on startup; localStorage used as offline fallback</li>
+              <li>All saves write to Supabase instantly in the background</li>
+              <li>First device to connect automatically uploads local data to cloud</li>
+              <li>iPhone and desktop now always see the same data</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.2.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-improvement">Improvement</span>
+            </div>
+            <h4>Mobile Responsive Layout</h4>
+            <ul>
+              <li>Sidebar transforms into a fixed bottom navigation bar on mobile (≤640px)</li>
+              <li>Nav items show icon + label vertically in a horizontal row</li>
+              <li>iPhone safe area (home indicator) accounted for in bottom nav height</li>
+              <li>All grids collapse to single column on small screens</li>
+              <li>Expenses grand total card moves above category tabs on mobile</li>
+              <li>Category tabs scroll horizontally; transaction rows adjusted for narrow screens</li>
+              <li>Toast notifications repositioned above bottom nav bar</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.1.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Daily Expense Comparison Chart</h4>
+            <ul>
+              <li>Added Daily Expense Comparison bar chart to Dashboard</li>
+              <li>Shows total spending per day for the active month</li>
+              <li>Added spacing between Daily Expense chart and Category Breakdown card</li>
+              <li>Fixed Monthly Income vs Expenses chart height (was too tall)</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v2.0.0</span>
+              <span class="changelog-date">May 18, 2026</span>
+              <span class="changelog-tag tag-new">New</span>
+            </div>
+            <h4>Food Category, Data Import &amp; UX Fixes</h4>
+            <ul>
+              <li>Added Food expense category; migrated Breakfast, Lunch, Dinner, Bread, Snacks, 7/11 items automatically</li>
+              <li>Imported May 2026 entries from Excel — income and all expense transactions pre-loaded</li>
+              <li>Default active month set to May 2026</li>
+              <li>Expense transactions sorted newest-first</li>
+              <li>Added running total card to Expenses tab</li>
+              <li>Fixed delete button removing wrong transaction (sort-index bug)</li>
+              <li>Annual Summary: replaced stacked bar with line chart per category across 12 months</li>
+              <li>Removed duplicate Expense Breakdown chart from Annual Summary (already on Dashboard)</li>
+              <li>Admin moved to bottom of sidebar with divider; nav item size increased</li>
+            </ul>
+          </div>
 
           <div class="changelog-item">
             <div class="changelog-meta">
