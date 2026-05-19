@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -14,21 +14,23 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <div class="login-logo">
-        <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="8" fill="rgba(129,140,248,0.2)"/>
+        <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
           <path d="M8 14h4v6H8v-6zm4-4h4v10h-4V10zm4-4h4v14h-4V6z" fill="#818cf8"/>
         </svg>
       </div>
       <h1 class="login-title">Geneva Budget Tracker</h1>
       <p class="login-year">2026</p>
+      <div class="login-divider"></div>
       <div class="login-form">
+        <label class="login-label" for="loginInput">Password</label>
         <div class="login-input-wrap">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="login-icon"><path d="M8 1a3 3 0 00-3 3v2H4a1 1 0 00-1 1v7a1 1 0 001 1h8a1 1 0 001-1V7a1 1 0 00-1-1h-1V4a3 3 0 00-3-3zm-1 3a1 1 0 112 0v2H7V4zm1 5a1 1 0 110 2 1 1 0 010-2z"/></svg>
-          <input type="password" id="loginInput" class="login-input" placeholder="Enter password" autocomplete="current-password">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" class="login-icon"><path d="M8 1a3 3 0 00-3 3v2H4a1 1 0 00-1 1v7a1 1 0 001 1h8a1 1 0 001-1V7a1 1 0 00-1-1h-1V4a3 3 0 00-3-3zm-1 3a1 1 0 112 0v2H7V4zm1 5a1 1 0 110 2 1 1 0 010-2z"/></svg>
+          <input type="password" id="loginInput" class="login-input" placeholder="Enter your password" autocomplete="current-password">
         </div>
         <p class="login-error" id="loginError"></p>
         <button class="login-btn" id="loginBtn">Unlock</button>
       </div>
+      <p class="login-footer">Personal Finance · Geneva © 2026</p>
     </div>
   </div>
 
