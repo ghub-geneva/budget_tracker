@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026 Budget Tracker</title>
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -315,6 +315,22 @@
         </div>
 
         <div class="changelog-list">
+
+          <div class="changelog-item">
+            <div class="changelog-meta">
+              <span class="changelog-version">v3.1.0</span>
+              <span class="changelog-date">May 19, 2026</span>
+              <span class="changelog-tag tag-improvement">Improvement</span>
+            </div>
+            <h4>Code Optimization</h4>
+            <ul>
+              <li>Removed legacy migration functions (~200 lines of dead code)</li>
+              <li>Pre-cache all 12 months on Annual Summary render — ~180 fewer data lookups</li>
+              <li>Replaced <code>innerHTML +=</code> loops with array <code>join()</code> for faster DOM updates</li>
+              <li>Extracted reusable helper functions; unified <code>STORAGE_KEY</code> constant</li>
+              <li>Removed unused variables and dead query selectors</li>
+            </ul>
+          </div>
 
           <div class="changelog-item">
             <div class="changelog-meta">
