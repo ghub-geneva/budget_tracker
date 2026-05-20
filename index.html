@@ -326,7 +326,7 @@
             <h4>Code Optimization</h4>
             <ul>
               <li>Removed legacy migration functions (~200 lines of dead code)</li>
-              <li>Pre-cache all 12 months on Annual Summary render — ~180 fewer data lookups</li>
+              <li>Pre-cache all 12 months on Annual Summary render - ~180 fewer data lookups</li>
               <li>Replaced <code>innerHTML +=</code> loops with array <code>join()</code> for faster DOM updates</li>
               <li>Extracted reusable helper functions; unified <code>STORAGE_KEY</code> constant</li>
               <li>Removed unused variables and dead query selectors</li>
@@ -343,9 +343,9 @@
             <ul>
               <li>Added Monthly Insights card at the top of the Dashboard (above summary cards)</li>
               <li>Insights auto-generate 4 bullets: net balance status, biggest expense category, biggest month-over-month change, and income utilization %</li>
-              <li>Added Month-over-Month comparison table in Annual Summary — shows last month vs this month per category with color-coded ↑↓ change column</li>
+              <li>Added Month-over-Month comparison table in Annual Summary - shows last month vs this month per category with color-coded ↑↓ change column</li>
               <li>Added Budget Limits per category in Admin → Budget Limits tab</li>
-              <li>Progress bar appears in Expenses category header when a limit is set — turns yellow at 70%, red at 90%</li>
+              <li>Progress bar appears in Expenses category header when a limit is set - turns yellow at 70%, red at 90%</li>
               <li>Summary cards (Income / Expenses / Net Balance) reordered to appear above Monthly Insights</li>
             </ul>
           </div>
@@ -374,7 +374,7 @@
             </div>
             <h4>Mobile Expenses Fixes</h4>
             <ul>
-              <li>Fixed transaction amounts not showing on iPhone — iOS Safari grid min-width bug resolved</li>
+              <li>Fixed transaction amounts not showing on iPhone - iOS Safari grid min-width bug resolved</li>
               <li>Added scroll hint on category tabs so the last tab is no longer hard-clipped</li>
               <li>Improved category tab sizing, touch target sizes for Add/Remove buttons, and transaction row layout on small screens</li>
             </ul>
@@ -404,7 +404,7 @@
             </div>
             <h4>Supabase Cloud Sync</h4>
             <ul>
-              <li>Integrated Supabase as cloud database — data now syncs across all devices</li>
+              <li>Integrated Supabase as cloud database - data now syncs across all devices</li>
               <li>Data loads from Supabase on startup; localStorage used as offline fallback</li>
               <li>All saves write to Supabase instantly in the background</li>
               <li>First device to connect automatically uploads local data to cloud</li>
@@ -454,7 +454,7 @@
             <h4>Food Category, Data Import &amp; UX Fixes</h4>
             <ul>
               <li>Added Food expense category; migrated Breakfast, Lunch, Dinner, Bread, Snacks, 7/11 items automatically</li>
-              <li>Imported May 2026 entries from Excel — income and all expense transactions pre-loaded</li>
+              <li>Imported May 2026 entries from Excel - income and all expense transactions pre-loaded</li>
               <li>Default active month set to May 2026</li>
               <li>Expense transactions sorted newest-first</li>
               <li>Added running total card to Expenses tab</li>
@@ -505,7 +505,7 @@
             <ul>
               <li>Full dark theme applied across all pages and modals</li>
               <li>Moved Active Month selector from sidebar to persistent top bar</li>
-              <li>Expense categories now use clickable tab menu — only selected category is shown</li>
+              <li>Expense categories now use clickable tab menu - only selected category is shown</li>
               <li>Chart axis labels and legends updated for dark background readability</li>
             </ul>
           </div>
@@ -534,7 +534,7 @@
             <ul>
               <li>Dashboard with Total Income, Total Expenses, and Net Balance cards</li>
               <li>Expense breakdown donut chart and monthly trend bar chart</li>
-              <li>Income tracker: Main Job, Graphics, Municipal — 15th &amp; 30th paydays</li>
+              <li>Income tracker: Main Job, Graphics, Municipal - 15th &amp; 30th paydays</li>
               <li>Additional Funds section for bonuses and external income</li>
               <li>6 expense categories: Bills, Debts, Needs, Wants, Miscellaneous, Unexpected</li>
               <li>Annual Summary table with month-by-month breakdown</li>
@@ -562,9 +562,9 @@
             <h4>Dashboard</h4>
             <p>The Dashboard gives you a real-time snapshot of the selected month. The three hero cards show <strong>Total Income</strong>, <strong>Total Expenses</strong>, and <strong>Net Balance</strong> (green when positive, red when in deficit).</p>
             <ul>
-              <li><strong>Expense Breakdown</strong> — donut chart showing each category's share of total spending</li>
-              <li><strong>Monthly Trend</strong> — bar chart comparing income vs expenses for all 12 months</li>
-              <li><strong>Category Breakdown</strong> — progress bars showing each category's peso amount and percentage</li>
+              <li><strong>Expense Breakdown</strong> - donut chart showing each category's share of total spending</li>
+              <li><strong>Monthly Trend</strong> - bar chart comparing income vs expenses for all 12 months</li>
+              <li><strong>Category Breakdown</strong> - progress bars showing each category's peso amount and percentage</li>
             </ul>
           </div>
 
@@ -575,9 +575,9 @@
             <h4>Income</h4>
             <p>Track salary from three sources, each with a <strong>15th</strong> and <strong>30th</strong> payday slot:</p>
             <ul>
-              <li><strong>Main Job</strong> — primary employment salary</li>
-              <li><strong>Graphics</strong> — freelance / design income</li>
-              <li><strong>Municipal</strong> — government or municipal pay</li>
+              <li><strong>Main Job</strong> - primary employment salary</li>
+              <li><strong>Graphics</strong> - freelance / design income</li>
+              <li><strong>Municipal</strong> - government or municipal pay</li>
             </ul>
             <p>Use <strong>Additional Funds</strong> for one-time income like bonuses, mid-year pay, or money received from others. Click <em>Save Income</em> to persist the values for the selected month.</p>
           </div>
@@ -589,12 +589,12 @@
             <h4>Expenses</h4>
             <p>Expenses are split into 6 categories. Select a category tab to view and add transactions for it.</p>
             <ul>
-              <li><strong>Bills</strong> — recurring fixed costs (utilities, subscriptions, gas)</li>
-              <li><strong>Debts</strong> — loans, credit card payments, buy-now-pay-later</li>
-              <li><strong>Needs</strong> — food, groceries, laundry, transport, household essentials</li>
-              <li><strong>Wants</strong> — dining out, snacks, entertainment, non-essentials</li>
-              <li><strong>Miscellaneous</strong> — allowances, gifts, church offerings, personal care</li>
-              <li><strong>Unexpected</strong> — medical, emergency repairs, unplanned costs</li>
+              <li><strong>Bills</strong> - recurring fixed costs (utilities, subscriptions, gas)</li>
+              <li><strong>Debts</strong> - loans, credit card payments, buy-now-pay-later</li>
+              <li><strong>Needs</strong> - food, groceries, laundry, transport, household essentials</li>
+              <li><strong>Wants</strong> - dining out, snacks, entertainment, non-essentials</li>
+              <li><strong>Miscellaneous</strong> - allowances, gifts, church offerings, personal care</li>
+              <li><strong>Unexpected</strong> - medical, emergency repairs, unplanned costs</li>
             </ul>
             <p>Each transaction requires a <em>date</em>, <em>description</em>, and <em>amount</em>. Totals update instantly.</p>
           </div>
@@ -606,11 +606,11 @@
             <h4>Annual Summary</h4>
             <p>The Annual Summary shows the full picture across all 12 months of 2026.</p>
             <ul>
-              <li><strong>Income vs Expenses chart</strong> — grouped bars with a net balance trend line</li>
-              <li><strong>Category breakdown chart</strong> — stacked bars showing how each expense type contributes per month</li>
-              <li><strong>Summary table</strong> — row-by-row breakdown of every category, total expenses, and net balance for each month with an annual total column</li>
+              <li><strong>Income vs Expenses chart</strong> - grouped bars with a net balance trend line</li>
+              <li><strong>Category breakdown chart</strong> - stacked bars showing how each expense type contributes per month</li>
+              <li><strong>Summary table</strong> - row-by-row breakdown of every category, total expenses, and net balance for each month with an annual total column</li>
             </ul>
-            <p>The Active Month selector does not affect this page — it always shows the full year.</p>
+            <p>The Active Month selector does not affect this page - it always shows the full year.</p>
           </div>
 
           <div class="doc-card">
@@ -618,10 +618,10 @@
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 100 18A9 9 0 0010 1zm1 13H9v-5h2v5zm0-7H9V5h2v2z"/></svg>
             </div>
             <h4>Data &amp; Storage</h4>
-            <p>All budget data is saved automatically in your browser's <strong>localStorage</strong> — no account or internet connection required to view your data.</p>
+            <p>All budget data is saved automatically in your browser's <strong>localStorage</strong> - no account or internet connection required to view your data.</p>
             <ul>
               <li>Data persists across page refreshes and browser restarts</li>
-              <li>Data is stored only on this device and browser — it does not sync across devices</li>
+              <li>Data is stored only on this device and browser - it does not sync across devices</li>
               <li>Clearing browser data or site storage will erase all entries</li>
               <li>Each month's data is stored independently under the key <code>budgetTracker2026</code></li>
             </ul>
@@ -650,7 +650,7 @@
               <p>At the top of any page, use the <strong>Active Month</strong> dropdown to select the month you are tracking. All Income and Expense entries are saved per month independently.</p>
               <div class="step-tip">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
-                Do this first — entering data without selecting the right month will save it to the wrong month.
+                Do this first - entering data without selecting the right month will save it to the wrong month.
               </div>
             </div>
           </div>
@@ -678,7 +678,7 @@
                 <li>Select the correct <strong>category tab</strong> (Bills, Debts, Needs, Wants, Miscellaneous, Unexpected)</li>
                 <li>Click <strong>+ Add</strong> to open the transaction form</li>
                 <li>Enter the date, a short description, and the amount in ₱</li>
-                <li>Repeat for each expense — totals update immediately</li>
+                <li>Repeat for each expense - totals update immediately</li>
               </ul>
               <div class="step-tip">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
@@ -693,7 +693,7 @@
               <h4>Review the Dashboard</h4>
               <p>Switch to the <strong>Dashboard</strong> at any time to see your current standing for the month:</p>
               <ul>
-                <li>Check the <strong>Net Balance</strong> card — green means you are within budget, red means overspent</li>
+                <li>Check the <strong>Net Balance</strong> card - green means you are within budget, red means overspent</li>
                 <li>Review the <strong>Expense Breakdown</strong> donut to identify which categories are consuming the most</li>
                 <li>Use the <strong>Category Breakdown</strong> progress bars to spot runaway spending</li>
               </ul>
@@ -725,7 +725,7 @@
               </ul>
               <div class="step-tip">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm.5 9h-1V6.5h1V10zm0-5h-1v-1h1v1z"/></svg>
-                Use the annual charts to plan ahead — if Miscellaneous is consistently high, consider setting a personal limit.
+                Use the annual charts to plan ahead - if Miscellaneous is consistently high, consider setting a personal limit.
               </div>
             </div>
           </div>

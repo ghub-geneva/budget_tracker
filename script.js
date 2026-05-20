@@ -214,9 +214,9 @@ function renderInsights(data, md, month) {
   const items = [];
 
   if (net >= 0) {
-    items.push({ icon: '✅', text: `Net balance is <strong>${fmt(net)}</strong> — you're in the green this month!` });
+    items.push({ icon: '✅', text: `Net balance is <strong>${fmt(net)}</strong> - you're in the green this month!` });
   } else {
-    items.push({ icon: '⚠️', text: `Net balance is <strong>${fmt(net)}</strong> — expenses exceed income.` });
+    items.push({ icon: '⚠️', text: `Net balance is <strong>${fmt(net)}</strong> - expenses exceed income.` });
   }
 
   if (bigCat && bigAmt > 0) {
@@ -251,7 +251,7 @@ function renderInsights(data, md, month) {
 }
 
 function diffCell(diff, pct) {
-  if (diff === 0 && pct === 0) return `<span class="mom-neutral">—</span>`;
+  if (diff === 0 && pct === 0) return `<span class="mom-neutral">-</span>`;
   const cls   = diff > 0 ? 'mom-up' : 'mom-down';
   const arrow = diff > 0 ? '↑' : '↓';
   return `<span class="${cls}">${arrow} ${fmt(Math.abs(diff))} <small>(${Math.abs(pct).toFixed(0)}%)</small></span>`;
@@ -263,8 +263,8 @@ function renderMoM(data, month) {
   const prevM     = getPrevMonth(month);
   const md        = getMonthData(data, month);
   const pm        = getMonthData(data, prevM);
-  const prevLabel = MONTH_LABELS[prevM] ? MONTH_LABELS[prevM].split(' ')[0] : '—';
-  const currLabel = MONTH_LABELS[month] ? MONTH_LABELS[month].split(' ')[0] : '—';
+  const prevLabel = MONTH_LABELS[prevM] ? MONTH_LABELS[prevM].split(' ')[0] : '-';
+  const currLabel = MONTH_LABELS[month] ? MONTH_LABELS[month].split(' ')[0] : '-';
 
   const rows = CATEGORIES.map(c => {
     const curr = categoryTotal(md, c.key);
@@ -298,8 +298,8 @@ function renderMoM(data, month) {
           ${rows.map(r => `
             <tr>
               <td><span class="dot" style="background:${r.c.color};width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0"></span>${r.c.label}</td>
-              <td class="mom-amt">${r.prev > 0 ? fmt(r.prev) : '<span class="mom-neutral">—</span>'}</td>
-              <td class="mom-amt">${r.curr > 0 ? fmt(r.curr) : '<span class="mom-neutral">—</span>'}</td>
+              <td class="mom-amt">${r.prev > 0 ? fmt(r.prev) : '<span class="mom-neutral">-</span>'}</td>
+              <td class="mom-amt">${r.curr > 0 ? fmt(r.curr) : '<span class="mom-neutral">-</span>'}</td>
               <td>${diffCell(r.diff, r.pct)}</td>
             </tr>`).join('')}
         </tbody>
@@ -465,7 +465,7 @@ function renderDailyChart(md) {
   });
 
   const titleEl = document.getElementById('dailyChartTitle');
-  if (titleEl) titleEl.textContent = `Daily Expense Comparison — ${MONTH_LABELS[activeMonth]}`;
+  if (titleEl) titleEl.textContent = `Daily Expense Comparison - ${MONTH_LABELS[activeMonth]}`;
 
   if (dailyExpenseChart) { dailyExpenseChart.destroy(); dailyExpenseChart = null; }
   dailyExpenseChart = new Chart(document.getElementById('dailyExpenseChart').getContext('2d'), {
@@ -638,7 +638,7 @@ function renderSummary(data) {
     }
   });
 
-  // Chart 2: Line chart — expense category trends per month
+  // Chart 2: Line chart - expense category trends per month
   if (annualStackedChart) { annualStackedChart.destroy(); annualStackedChart = null; }
   annualStackedChart = new Chart(
     document.getElementById('annualStackedChart').getContext('2d'), {
@@ -685,8 +685,8 @@ function renderSummary(data) {
     const sum  = vals.reduce((s, v) => s + v, 0);
     tableRows.push(`<tr>
       <td><span class="dot" style="background:${c.color};margin-right:6px"></span>${c.label}</td>
-      ${vals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#334155">—</span>'}</td>`).join('')}
-      <td>${sum > 0 ? fmt(sum) : '<span style="color:#334155">—</span>'}</td>
+      ${vals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#334155">-</span>'}</td>`).join('')}
+      <td>${sum > 0 ? fmt(sum) : '<span style="color:#334155">-</span>'}</td>
     </tr>`);
   });
 
@@ -917,11 +917,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     render();
   });
 
-  // Year picker — sidebar dropdown
+  // Year picker - sidebar dropdown
   const sidebarYearEl = document.getElementById('sidebarYearSelect');
   if (sidebarYearEl) sidebarYearEl.addEventListener('change', e => switchYear(+e.target.value));
 
-  // Year picker — mobile topbar select
+  // Year picker - mobile topbar select
   const yearSelectEl = document.getElementById('yearSelect');
   if (yearSelectEl) yearSelectEl.addEventListener('change', e => switchYear(+e.target.value));
 

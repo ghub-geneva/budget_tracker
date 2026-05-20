@@ -215,7 +215,7 @@ body {
 .topbar-month select:focus { border-color: var(--primary); }
 .topbar-month select option { background: #1a2332; color: var(--text); }
 
-/* ── Topbar Year Select (mobile only — hidden on desktop) ── */
+/* ── Topbar Year Select (mobile only - hidden on desktop) ── */
 .topbar-year { display: none; }
 
 .topbar-year select {
@@ -1835,7 +1835,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .category-title { font-size: 13px; }
   .category-total { font-size: 11px; }
 
-  /* Touch targets — minimum 44px */
+  /* Touch targets - minimum 44px */
   .btn-add-tx {
     padding: 10px 14px;
     font-size: 13px;
