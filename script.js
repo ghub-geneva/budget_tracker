@@ -611,17 +611,21 @@ function renderDailyChart(md) {
 
   if (dailyExpenseChart) { dailyExpenseChart.destroy(); dailyExpenseChart = null; }
   dailyExpenseChart = new Chart(document.getElementById('dailyExpenseChart').getContext('2d'), {
-    type: 'bar',
+    type: 'line',
     data: {
       labels,
       datasets: [{
         label: 'Daily Expenses',
         data: dailyTotals,
-        backgroundColor: dailyTotals.map(v => v > 0 ? 'rgba(248,113,113,0.75)' : 'rgba(248,113,113,0.15)'),
-        borderColor: dailyTotals.map(v => v > 0 ? '#f87171' : 'transparent'),
-        borderWidth: 1,
-        borderRadius: 4,
-        borderSkipped: false
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248,113,113,0.1)',
+        borderWidth: 2.5,
+        pointBackgroundColor: dailyTotals.map(v => v > 0 ? '#f87171' : 'transparent'),
+        pointBorderColor: dailyTotals.map(v => v > 0 ? '#f87171' : 'transparent'),
+        pointRadius: dailyTotals.map(v => v > 0 ? 4 : 2),
+        pointHoverRadius: 6,
+        tension: 0.3,
+        fill: true
       }]
     },
     options: {
