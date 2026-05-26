@@ -118,6 +118,13 @@ function totalExpenses(md) {
   return CATEGORIES.reduce((s, c) => s + categoryTotal(md, c.key), 0);
 }
 
+function totalSavingsMonth(md) {
+  return SAVINGS_CATEGORIES.reduce((sum, c) => {
+    const s = md.savings && md.savings[c.key];
+    return s ? sum + (+s.d15 || 0) + (+s.d30 || 0) : sum;
+  }, 0);
+}
+
 // ── Formatting ────────────────────────────────────────────────
 function fmt(n) {
   return '₱' + (+n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -197,7 +204,8 @@ function renderInsights(data, md, month) {
   const pm    = getMonthData(data, prevM);
   const inc   = totalIncome(md);
   const exp   = totalExpenses(md);
-  const net   = inc - exp;
+  const sav   = totalSavingsMonth(md);
+  const net   = inc - exp - sav;
 
   // Biggest expense category
   let bigCat = null, bigAmt = 0;
@@ -219,8 +227,8 @@ function renderInsights(data, md, month) {
     }
   });
 
-  // Income utilization
-  const util = inc > 0 ? (exp / inc * 100).toFixed(1) : null;
+  // Income utilization (expenses + savings vs income)
+  const util = inc > 0 ? ((exp + sav) / inc * 100).toFixed(1) : null;
 
   const items = [];
 
@@ -430,7 +438,8 @@ function renderDashboard(data, md) {
   renderInsights(data, md, activeMonth);
   const inc  = totalIncome(md);
   const exp  = totalExpenses(md);
-  const net  = inc - exp;
+  const sav  = totalSavingsMonth(md);
+  const net  = inc - exp - sav;
 
   document.getElementById('totalIncome').textContent   = fmt(inc);
   document.getElementById('totalExpenses').textContent = fmt(exp);
@@ -684,7 +693,8 @@ function renderSummary(data) {
   const monthCache = MONTHS.map(m => getMonthData(data, m));
   const incomeVals = monthCache.map(md => totalIncome(md));
   const expVals    = monthCache.map(md => totalExpenses(md));
-  const netVals    = incomeVals.map((inc, i) => inc - expVals[i]);
+  const savVals    = monthCache.map(md => totalSavingsMonth(md));
+  const netVals    = incomeVals.map((inc, i) => inc - expVals[i] - savVals[i]);
 
   // Chart 1: Grouped bar (income vs expenses) + net line
   if (annualOverviewChart) { annualOverviewChart.destroy(); annualOverviewChart = null; }
@@ -756,7 +766,7 @@ function renderSummary(data) {
   const tbody     = document.getElementById('annualTableBody');
   const incomeSum = incomeVals.reduce((s, v) => s + v, 0);
   const expSum    = expVals.reduce((s, v) => s + v, 0);
-  const netSum    = incomeSum - expSum;
+  const netSum    = incomeSum - expSum - savVals.reduce((s, v) => s + v, 0);
 
   const tableRows = [`<tr class="row-income"><td>Income</td>${incomeVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(incomeSum)}</td></tr>`];
 
@@ -770,7 +780,9 @@ function renderSummary(data) {
     </tr>`);
   });
 
+  const savSum = savVals.reduce((s, v) => s + v, 0);
   tableRows.push(`<tr class="row-total"><td>Total Expenses</td>${expVals.map(v => `<td>${fmt(v)}</td>`).join('')}<td>${fmt(expSum)}</td></tr>`);
+  tableRows.push(`<tr class="row-savings-sum"><td><span class="dot" style="background:#10b981;margin-right:6px"></span>Savings</td>${savVals.map(v => `<td>${v > 0 ? fmt(v) : '<span style="color:#334155">-</span>'}</td>`).join('')}<td>${savSum > 0 ? fmt(savSum) : '<span style="color:#334155">-</span>'}</td></tr>`);
   tableRows.push(`<tr class="row-net"><td>Net Balance</td>${netVals.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${fmt(v)}</td>`).join('')}<td class="${netSum >= 0 ? 'positive' : 'negative'}">${fmt(netSum)}</td></tr>`);
   tbody.innerHTML = tableRows.join('');
 
