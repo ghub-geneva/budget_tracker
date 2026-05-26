@@ -20,6 +20,12 @@ function buildMonthLabels(year) {
 let MONTHS       = buildMonths(activeYear);
 let MONTH_LABELS = buildMonthLabels(activeYear);
 
+const SAVINGS_CATEGORIES = [
+  { key: 'emergency', label: 'Emergency Funds', color: '#10b981' },
+  { key: 'wedding',   label: 'Future Wedding',  color: '#f472b6' },
+  { key: 'travel',    label: 'Travel Funds',    color: '#38bdf8' }
+];
+
 const CATEGORIES = [
   { key: 'bills',         label: 'Bills',              color: '#6366f1' },
   { key: 'debts',         label: 'Debts',              color: '#f59e0b' },
@@ -83,9 +89,13 @@ async function initData() {
 function getMonthData(data, month) {
   if (!data[month]) {
     data[month] = {
-      income: { main15: 0, main30: 0, graphics15: 0, graphics30: 0, municipal15: 0, municipal30: 0, additional: [] },
-      expenses: { bills: [], debts: [], needs: [], food: [], wants: [], miscellaneous: [], unexpected: [] }
+      income:   { main15: 0, main30: 0, graphics15: 0, graphics30: 0, municipal15: 0, municipal30: 0, additional: [] },
+      expenses: { bills: [], debts: [], needs: [], food: [], wants: [], miscellaneous: [], unexpected: [] },
+      savings:  { emergency: { d15: 0, d30: 0 }, wedding: { d15: 0, d30: 0 }, travel: { d15: 0, d30: 0 } }
     };
+  }
+  if (!data[month].savings) {
+    data[month].savings = { emergency: { d15: 0, d30: 0 }, wedding: { d15: 0, d30: 0 }, travel: { d15: 0, d30: 0 } };
   }
   return data[month];
 }
@@ -332,6 +342,31 @@ function renderBudgetLimitsForm() {
     </div>`).join('');
 }
 
+// ── Savings ───────────────────────────────────────────────────
+function totalSavingsCumulative(data, key) {
+  return Object.values(data).reduce((sum, md) => {
+    const s = md.savings && md.savings[key];
+    return s ? sum + (+s.d15 || 0) + (+s.d30 || 0) : sum;
+  }, 0);
+}
+
+function renderSavings(md, data) {
+  SAVINGS_CATEGORIES.forEach(c => {
+    const s = (md.savings && md.savings[c.key]) || { d15: 0, d30: 0 };
+    document.getElementById(`${c.key}-d15`).value = s.d15 || '';
+    document.getElementById(`${c.key}-d30`).value = s.d30 || '';
+    document.getElementById(`savTotal-${c.key}`).textContent = fmt(totalSavingsCumulative(data, c.key));
+  });
+  updateSavingsFooter();
+}
+
+function updateSavingsFooter() {
+  const total = SAVINGS_CATEGORIES.reduce((sum, c) =>
+    sum + (+document.getElementById(`${c.key}-d15`).value || 0)
+        + (+document.getElementById(`${c.key}-d30`).value || 0), 0);
+  document.getElementById('savingsPageTotal').textContent = fmt(total);
+}
+
 // ── Render ────────────────────────────────────────────────────
 function render() {
   const data = loadData();
@@ -342,6 +377,7 @@ function render() {
   if (activeTab === 'dashboard') renderDashboard(data, md);
   if (activeTab === 'income')    renderIncome(md);
   if (activeTab === 'expenses')  renderExpenses(md);
+  if (activeTab === 'savings')   renderSavings(md, data);
   if (activeTab === 'summary')   renderSummary(data);
 }
 
@@ -898,7 +934,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (Object.keys(cachedData).length) syncToSupabase(cachedData);
   }
 
-  const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', summary: 'Annual Summary', admin: 'Admin' };
+  const TAB_TITLES = { dashboard: 'Dashboard', income: 'Income', expenses: 'Expenses', savings: 'Savings', summary: 'Annual Summary', admin: 'Admin' };
 
   // Tab navigation
   document.querySelectorAll('.nav-item').forEach(btn => {
@@ -931,6 +967,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = loadData();
       updateIncomeFooter(getMonthData(data, activeMonth));
     });
+  });
+
+  // Savings live total
+  SAVINGS_CATEGORIES.forEach(c => {
+    [`${c.key}-d15`, `${c.key}-d30`].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateSavingsFooter);
+    });
+  });
+
+  // Save savings
+  document.getElementById('saveSavingsBtn').addEventListener('click', () => {
+    const data = loadData();
+    const md   = getMonthData(data, activeMonth);
+    SAVINGS_CATEGORIES.forEach(c => {
+      md.savings[c.key] = {
+        d15: +document.getElementById(`${c.key}-d15`).value || 0,
+        d30: +document.getElementById(`${c.key}-d30`).value || 0
+      };
+    });
+    saveData(data);
+    render();
+    showToast('Savings saved');
   });
 
   // Save income
