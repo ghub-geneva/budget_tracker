@@ -21,7 +21,7 @@ let MONTHS       = buildMonths(activeYear);
 let MONTH_LABELS = buildMonthLabels(activeYear);
 
 const SAVINGS_CATEGORIES = [
-  { key: 'emergency', label: 'Emergency Funds', color: '#10b981', goal: 5000 },
+  { key: 'emergency', label: 'Emergency Funds', color: '#10b981', goal: 4000 },
   { key: 'wedding',   label: 'Future Wedding',  color: '#f472b6', goal: 3000 },
   { key: 'travel',    label: 'Travel Funds',    color: '#38bdf8', goal: 3000 }
 ];
