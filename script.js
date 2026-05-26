@@ -21,9 +21,9 @@ let MONTHS       = buildMonths(activeYear);
 let MONTH_LABELS = buildMonthLabels(activeYear);
 
 const SAVINGS_CATEGORIES = [
-  { key: 'emergency', label: 'Emergency Funds', color: '#10b981' },
-  { key: 'wedding',   label: 'Future Wedding',  color: '#f472b6' },
-  { key: 'travel',    label: 'Travel Funds',    color: '#38bdf8' }
+  { key: 'emergency', label: 'Emergency Funds', color: '#10b981', goal: 5000 },
+  { key: 'wedding',   label: 'Future Wedding',  color: '#f472b6', goal: 3000 },
+  { key: 'travel',    label: 'Travel Funds',    color: '#38bdf8', goal: 3000 }
 ];
 
 const CATEGORIES = [
@@ -433,9 +433,57 @@ function render() {
   if (activeTab === 'summary')   renderSummary(data);
 }
 
+// ── Savings Goals (Dashboard card) ───────────────────────────
+function renderSavingsGoals(md) {
+  const el = document.getElementById('savingsGoalCard');
+  if (!el) return;
+
+  const rows = SAVINGS_CATEGORIES.map(c => {
+    const s = (md.savings && md.savings[c.key]) || { d15: 0, d30: 0 };
+    const deposited = (+s.d15 || 0) + (+s.d30 || 0);
+    const pct  = Math.min(100, deposited / c.goal * 100);
+    const met  = deposited >= c.goal;
+    const barColor = met ? c.color : pct >= 50 ? '#f59e0b' : '#ef4444';
+    return { c, deposited, pct, met, barColor };
+  });
+
+  const metCount = rows.filter(r => r.met).length;
+  const allMet   = metCount === rows.length;
+  const unmet    = rows.filter(r => !r.met);
+
+  el.innerHTML = `
+    <div class="sav-goal-hdr">
+      <h3>Monthly Savings Goals</h3>
+      <span class="sav-badge ${allMet ? 'sav-badge-ok' : 'sav-badge-warn'}">
+        ${allMet ? '✅ All goals met' : `⚠️ ${metCount}/${rows.length} met`}
+      </span>
+    </div>
+    ${rows.map(r => `
+      <div class="sav-goal-row">
+        <div class="sav-goal-lbl">
+          <span class="dot" style="background:${r.c.color}"></span>
+          <span>${r.c.label}</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" style="width:${r.pct.toFixed(1)}%;background:${r.barColor}"></div>
+        </div>
+        <div class="sav-goal-amt">
+          <span style="color:${r.met ? r.c.color : 'var(--text)'}">${fmt(r.deposited)}</span>
+          <span class="sav-goal-target">/ ${fmt(r.c.goal)}</span>
+          <span>${r.met ? '✅' : '⚠️'}</span>
+        </div>
+      </div>`).join('')}
+    ${!allMet ? `
+      <div class="sav-goal-warning">
+        <span>⚠️</span>
+        <span>${unmet.map(r => `<strong>${r.c.label}</strong> needs ${fmt(r.c.goal - r.deposited)} more`).join(' &bull; ')}</span>
+      </div>` : ''}`;
+}
+
 // ── Dashboard ─────────────────────────────────────────────────
 function renderDashboard(data, md) {
   renderInsights(data, md, activeMonth);
+  renderSavingsGoals(md);
   const inc  = totalIncome(md);
   const exp  = totalExpenses(md);
   const sav  = totalSavingsMonth(md);

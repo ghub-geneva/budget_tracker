@@ -397,6 +397,78 @@ body {
   color: var(--text);
 }
 
+/* ── Savings Goals Card (Dashboard) ── */
+.sav-goal-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sav-goal-hdr h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sav-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.sav-badge-ok   { background: rgba(52,211,153,0.12); color: #34d399; }
+.sav-badge-warn { background: rgba(245,158,11,0.12);  color: #f59e0b; }
+
+.sav-goal-row {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sav-goal-row:last-of-type { border-bottom: none; }
+
+.sav-goal-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.sav-goal-amt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sav-goal-target {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.sav-goal-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(245,158,11,0.07);
+  border-radius: 8px;
+  border-left: 3px solid #f59e0b;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 /* ── Savings Tab ── */
 .savings-totals {
   display: grid;
@@ -1941,6 +2013,11 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .income-grid { grid-template-columns: 1fr; }
   .savings-totals { grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
   .payday-row { flex-direction: column; }
+
+  /* Savings goal card */
+  .sav-goal-row { grid-template-columns: 1fr auto; }
+  .sav-goal-row .progress-bar-wrap { display: none; }
+  .sav-goal-lbl { font-size: 12px; }
 
   /* Income footer */
   .income-footer { flex-direction: column; gap: 10px; }
