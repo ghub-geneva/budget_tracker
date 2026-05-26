@@ -379,7 +379,7 @@ function renderSavingsChart(data) {
   if (savingsChart) { savingsChart.destroy(); savingsChart = null; }
 
   savingsChart = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: SHORT_LABELS,
       datasets: SAVINGS_CATEGORIES.map(c => ({
@@ -388,9 +388,14 @@ function renderSavingsChart(data) {
           const s = md.savings && md.savings[c.key];
           return s ? (+s.d15 || 0) + (+s.d30 || 0) : 0;
         }),
-        backgroundColor: c.color + 'cc',
-        borderRadius: 4,
-        borderSkipped: false
+        borderColor: c.color,
+        backgroundColor: c.color + '22',
+        borderWidth: 2.5,
+        pointBackgroundColor: c.color,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        tension: 0.3,
+        fill: false
       }))
     },
     options: {
@@ -405,8 +410,8 @@ function renderSavingsChart(data) {
         }
       },
       scales: {
-        x: { stacked: true, grid: { display: false }, ticks: { color: '#64748b' } },
-        y: { stacked: true, beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
+        x: { grid: { display: false }, ticks: { color: '#64748b' } },
+        y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
       }
     }
   });
