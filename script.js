@@ -45,6 +45,7 @@ let trendChart            = null;
 let annualOverviewChart   = null;
 let annualStackedChart    = null;
 let dailyExpenseChart     = null;
+let savingsChart          = null;
 
 // ── Supabase ──────────────────────────────────────────────────
 const SB_URL  = 'https://hdnyavpcnlohuidxddpv.supabase.co';
@@ -357,7 +358,50 @@ function renderSavings(md, data) {
     document.getElementById(`${c.key}-d30`).value = s.d30 || '';
     document.getElementById(`savTotal-${c.key}`).textContent = fmt(totalSavingsCumulative(data, c.key));
   });
+  renderSavingsChart(data);
   updateSavingsFooter();
+}
+
+function renderSavingsChart(data) {
+  const canvas = document.getElementById('savingsChart');
+  if (!canvas) return;
+
+  const monthCache = MONTHS.map(m => getMonthData(data, m));
+
+  if (savingsChart) { savingsChart.destroy(); savingsChart = null; }
+
+  savingsChart = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: SHORT_LABELS,
+      datasets: SAVINGS_CATEGORIES.map(c => ({
+        label: c.label,
+        data: monthCache.map(md => {
+          const s = md.savings && md.savings[c.key];
+          return s ? (+s.d15 || 0) + (+s.d30 || 0) : 0;
+        }),
+        backgroundColor: c.color + 'cc',
+        borderRadius: 4,
+        borderSkipped: false
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+        tooltip: {
+          callbacks: { label: ctx => ctx.parsed.y > 0 ? ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` : null },
+          filter: item => item.parsed.y > 0
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#64748b' } },
+        y: { stacked: true, beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => '₱' + v.toLocaleString('en-PH') } }
+      }
+    }
+  });
 }
 
 function updateSavingsFooter() {
